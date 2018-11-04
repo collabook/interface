@@ -1,18 +1,21 @@
 <template>
-  <div id="wrapper">
-    <EditorPage></EditorPage>
+  <div class="columns" id="wrapper">
+    <FileTree class="column is-1" :files="this.$store.state.Book.files"></FileTree>
+    <EditorPage class="column is-11"></EditorPage>
   </div>
 </template>
 
 <script>
 import EditorPage from './EditorPage'
+import FileTree from './FileTree'
 import { messageBus } from '../main.js'
 import axios from 'axios'
 
 export default {
   name: 'MainWindow',
   components: {
-    EditorPage
+    EditorPage,
+    FileTree
   },
   created: function () {
     messageBus.$on('newBook', () => {

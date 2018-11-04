@@ -1,6 +1,6 @@
 <template>
   <div id="wrapper">
-    <editor id="editor" v-model="content" @init="editorInit" lang="markdown" theme="kuroir" width="500px" height="835"></editor>
+    <editor id="editor" v-model="content" @init="editorInit" lang="markdown" theme="kuroir" width="1000px" height="835"></editor>
   </div>
 </template>
 
