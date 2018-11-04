@@ -1,7 +1,7 @@
 <template>
   <div id="wrapper" v-if="this.$store.state.Book.visibility[files.name]">
-      <li v-on:click="toggle()">
-        {{ files.name }}
+      <li>
+        <span @click="toggle()">{{ files.name }}</span>
         <ul v-if="files.subfolders && files.subfolders.length">
           <node v-for="child in files.subfolders" :files="child"></node>
         </ul>
