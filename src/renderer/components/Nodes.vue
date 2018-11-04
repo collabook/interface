@@ -1,9 +1,9 @@
 <template>
-  <div id="wrapper" v-if="this.$store.state.Book.visibility[files.name]">
+  <div id="wrapper" v-if="this.$store.state.Book.visibility[node.name]">
       <li>
-        <span @click="toggle()">{{ files.name }}</span>
-        <ul v-if="files.subfolders && files.subfolders.length">
-          <node v-for="child in files.subfolders" :files="child"></node>
+        <span @click="handleClick(node)">{{ node.name }}</span>
+        <ul v-if="node.subfolders && node.subfolders.length">
+          <node v-for="child in node.subfolders" :node="child" :handle-click="handleClick"></node>
         </ul>
       </li>
     </ul>
@@ -14,13 +14,8 @@
 export default {
   name: 'node',
   props: {
-    files: Object
-  },
-  methods: {
-    toggle: function () {
-      console.log(this.files.name)
-      this.$store.commit('TOGGLE_VISIBILITY', this.files.name)
-    }
+    node: Object,
+    handleClick: Function
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div id="wrapper">
     <ul class="tree-list">
-      <nodes :files="files"></nodes>
+      <nodes :handle-click="handleClick" :node="files"></nodes>
     </ul>
   </div>
 </template>
@@ -14,7 +14,13 @@ export default {
     Nodes
   },
   props: {
-    files: Object
+    files: Object,
+    node: Object
+  },
+  methods: {
+    handleClick (node) {
+      this.$store.dispatch('toggle_visibility', node.name)
+    }
   }
 }
 </script>
