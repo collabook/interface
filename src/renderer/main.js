@@ -23,6 +23,10 @@ ipcRenderer.on('saveBook', (event, location) => {
   messageBus.$emit('saveBook', location)
 })
 
+ipcRenderer.on('save', (event) => {
+  messageBus.$emit('save')
+})
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false

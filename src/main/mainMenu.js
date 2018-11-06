@@ -1,7 +1,7 @@
 import { app, Menu } from 'electron'
 // import { currentContent } from './preview-server.js';
 // import fs from 'fs-extra';
-const {dialog} = require('electron')
+// const {dialog} = require('electron')
 
 export default function mainMenu (mainWindow) {
   const template = [
@@ -14,13 +14,15 @@ export default function mainMenu (mainWindow) {
           click: () => { mainWindow.webContents.send('newBook') }
         },
         {
+          label: 'Open',
+          accelerator: 'Ctrl-o',
+          // show dialog to select location of book
+          click: () => { mainWindow.webContents.send('openBook') }
+        },
+        {
           label: 'Save',
           accelerator: 'Ctrl+s',
-          click: () => {
-            dialog.showSaveDialog({defaultPath: '/home/akhil/NewBook'}, (location) => {
-              mainWindow.webContents.send('saveBook', location)
-            })
-          }
+          click: () => { mainWindow.webContents.send('save') }
         },
         {
           label: 'Quit',

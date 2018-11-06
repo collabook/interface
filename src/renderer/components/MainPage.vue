@@ -28,6 +28,9 @@ export default {
           console.log(e)
         })
     })
+    messageBus.$on('save', () => {
+      this.$store.dispatch('save_file')
+    })
   }
 }
 </script>

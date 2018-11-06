@@ -8,12 +8,6 @@
   export default {
     name: 'EditorPage',
 
-    data () {
-      return {
-        content: ''
-      }
-    },
-
     methods: {
       editorInit: function (editor) {
         require('brace/ext/language_tools')
@@ -28,12 +22,23 @@
         editor.getSession().setUseWrapMode(true)
         editor.getSession().setUseSoftTabs(true)
       }
+
     },
 
     components: {
       editor: require('vue2-ace-editor')
-    }
+    },
 
+    computed: {
+      content: {
+        get () {
+          return this.$store.state.Book.contentCurrent
+        },
+        set (value) {
+          this.$store.dispatch('content_changed', value)
+        }
+      }
+    }
   }
 </script>
 

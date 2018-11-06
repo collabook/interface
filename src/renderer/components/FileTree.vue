@@ -19,6 +19,7 @@ export default {
   },
   methods: {
     handleClick (node) {
+      this.$store.dispatch('change_current_file', node.name)
       this.$store.dispatch('toggle_visibility', node.name)
     }
   }
