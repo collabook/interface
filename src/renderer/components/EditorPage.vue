@@ -32,7 +32,7 @@
     computed: {
       content: {
         get () {
-          return this.$store.state.Book.contentCurrent
+          return this.$store.state.Book.currentContent
         },
         set (value) {
           this.$store.dispatch('content_changed', value)

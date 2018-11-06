@@ -1,5 +1,5 @@
 <template>
-  <div id="wrapper" v-if="this.$store.state.Book.visibility[node.name]">
+  <div id="wrapper" v-if="node.isVisible">
       <li>
         <span @click="handleClick(node)">{{ node.name }}</span>
         <ul v-if="node.subfolders && node.subfolders.length">

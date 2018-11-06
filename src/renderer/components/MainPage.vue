@@ -1,6 +1,6 @@
 <template>
   <div class="columns" id="wrapper">
-    <FileTree class="column is-1" :files="this.$store.state.Book.files"></FileTree>
+    <FileTree class="column is-1" :files="heirTree"></FileTree>
     <EditorPage class="column is-11"></EditorPage>
   </div>
 </template>
@@ -31,6 +31,28 @@ export default {
     messageBus.$on('save', () => {
       this.$store.dispatch('save_file')
     })
+  },
+  computed: {
+    heirTree: function () {
+      var flatArray = this.$store.state.Book.BookTree
+      var root
+
+      for (var file in flatArray) {
+        if (!flatArray[file].hasOwnProperty('subfolders')) {
+          flatArray[file].subfolders = []
+        }
+
+        var route = flatArray[file].fullPath.split('/')
+        if (route.length !== 2) {
+          var parent = route[route.length - 2]
+          flatArray[parent].subfolders.push(flatArray[file])
+        }
+        if (route.length === 2) {
+          root = flatArray[file]
+        }
+      }
+      return root
+    }
   }
 }
 </script>

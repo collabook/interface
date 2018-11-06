@@ -19,6 +19,7 @@ export default {
   },
   methods: {
     handleClick (node) {
+      // TODO: convert this into a single action
       this.$store.dispatch('change_current_file', node.name)
       this.$store.dispatch('toggle_visibility', node.name)
     }
