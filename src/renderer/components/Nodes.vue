@@ -1,9 +1,9 @@
 <template>
   <div id="wrapper" v-if="node.isVisible">
       <li>
-        <span @click="handleClick(node)">{{ node.name }}</span>
+        <span :id=node.fullPath @contextmenu="rightMenu($event)" @click="handleClick(node)">{{ node.name }}</span>
         <ul v-if="node.subfolders && node.subfolders.length">
-          <node v-for="child in node.subfolders" :node="child" :handle-click="handleClick"></node>
+          <node v-for="child in node.subfolders" :node="child" :right-menu="rightMenu" :handle-click="handleClick"></node>
         </ul>
       </li>
     </ul>
@@ -15,7 +15,8 @@ export default {
   name: 'node',
   props: {
     node: Object,
-    handleClick: Function
+    handleClick: Function,
+    rightMenu: Function
   }
 }
 </script>

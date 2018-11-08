@@ -21,6 +21,7 @@ export default {
     messageBus.$on('newBook', () => {
       this.$store.dispatch('new_book', {genre: 'fanatasy', name: 'ntw'})
     })
+    // not a thing
     messageBus.$on('saveBook', (location) => {
       console.log(this.$store.state.Book.file_heirarchy)
       axios.post(`http://127.0.0.1:8088/savebook`, this.$store.state.Book.file_heirarchy)
@@ -34,24 +35,7 @@ export default {
   },
   computed: {
     heirTree: function () {
-      var flatArray = this.$store.state.Book.BookTree
-      var root
-
-      for (var file in flatArray) {
-        if (!flatArray[file].hasOwnProperty('subfolders')) {
-          flatArray[file].subfolders = []
-        }
-
-        var route = flatArray[file].fullPath.split('/')
-        if (route.length !== 2) {
-          var parent = route[route.length - 2]
-          flatArray[parent].subfolders.push(flatArray[file])
-        }
-        if (route.length === 2) {
-          root = flatArray[file]
-        }
-      }
-      return root
+      return this.$store.getters.FileHierarchy
     }
   }
 }

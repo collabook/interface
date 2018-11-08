@@ -1,4 +1,5 @@
 import axios from 'axios'
+// import Vue from 'vue'
 
 const state = {
 
@@ -78,6 +79,12 @@ const mutations = {
 
   CONTENT_CHANGED (state, value) {
     state.currentContent = value
+  },
+
+  ADD_FILE (state, name, node) {
+    console.log(state)
+    // name is not seen as a variable
+    state.BookTree = Object.assign({}, state.BookTree, {name: node})
   }
 
 }
@@ -94,7 +101,20 @@ const actions = {
     commit('CONTENT_CHANGED', value)
   },
 
+  add_file ({ commit }, {parent, child}) {
+    var node = {
+      name: child,
+      fullPath: `${parent}/${child}`,
+      isVisible: false,
+      isFolder: false,
+      content: ''
+    }
+    console.log(node)
+    commit('ADD_FILE', child, node)
+  },
+
   // Probably does not belong in store
+  // turn off ismodified
   save_file ({ commit, state }) {
     var context = {'file': state.activeFile, 'content': state.currentContent}
     axios.post(`http://127.0.0.1:8088/save`, context)
@@ -120,8 +140,32 @@ const actions = {
   }
 }
 
+const getters = {
+  FileHierarchy: state => {
+    var flatArray = Object.assign({}, state.BookTree)
+    var root
+
+    for (var file in flatArray) {
+      if (!flatArray[file].hasOwnProperty('subfolders')) {
+        flatArray[file].subfolders = []
+      }
+
+      var route = flatArray[file].fullPath.split('/')
+      if (route.length !== 2) {
+        var parent = route[route.length - 2]
+        flatArray[parent].subfolders.push(flatArray[file])
+      }
+      if (route.length === 2) {
+        root = flatArray[file]
+      }
+    }
+    return root
+  }
+}
+
 export default {
   state,
   mutations,
-  actions
+  actions,
+  getters
 }
