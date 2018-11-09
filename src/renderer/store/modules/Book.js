@@ -65,8 +65,14 @@ const mutations = {
     state.filename.content = content
   },
 
-  TOGGLE_VISIBILITY (state, name) {
-    state.BookTree[name].isVisible = !state.BookTree[name].isVisible
+  TOGGLE_VISIBILITY (state, {name, action}) {
+    if (action === 'toggle') {
+      state.BookTree[name].isVisible = !state.BookTree[name].isVisible
+    } else if (action === 'on') {
+      state.BookTree[name].isVisible = true
+    } else {
+      state.BookTree[name].isVisible = false
+    }
   },
 
   CHANGE_CURRENT_FILE (state, filename) {
@@ -99,11 +105,13 @@ const actions = {
     commit('CONTENT_CHANGED', value)
   },
 
-  add_file ({ commit }, {parent, child}) {
+  add_file ({ commit, dispatch }, {parent, child}) {
+    var parentPath = parent.split('/')
+    var parentName = parentPath[parentPath.length - 1]
+    dispatch('toggle_visibility', {filename: parentName, action: 'on'})
     var node = {
       name: child,
       fullPath: `${parent}/${child}`,
-      // should depend on sibling's visibility
       isVisible: true,
       isFolder: false,
       content: ''
@@ -128,11 +136,11 @@ const actions = {
       })
   },
 
-  toggle_visibility ({ commit, state }, filename) {
+  toggle_visibility ({ commit, state }, {filename, action}) {
     for (var file in state.BookTree) {
       var path = state.BookTree[file].fullPath.split('/')
       if (path[path.length - 2] === filename) {
-        commit('TOGGLE_VISIBILITY', state.BookTree[file].name)
+        commit('TOGGLE_VISIBILITY', {name: state.BookTree[file].name, action: action})
       }
     }
   }
