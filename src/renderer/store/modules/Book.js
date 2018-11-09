@@ -1,11 +1,12 @@
 import axios from 'axios'
-// import Vue from 'vue'
+import Vue from 'vue'
 
 const state = {
 
+  // may be we should add a content changed from disk flag
+  // this should be an array
   BookTree: {
 
-    // may be we should add a content changed from disk flag
     'Book': {
       name: 'Book',
       fullPath: '/Book',
@@ -50,7 +51,6 @@ const state = {
   activeFile: '',
 
   currentContent: ''
-
 }
 
 const mutations = {
@@ -81,10 +81,8 @@ const mutations = {
     state.currentContent = value
   },
 
-  ADD_FILE (state, name, node) {
-    console.log(state)
-    // name is not seen as a variable
-    state.BookTree = Object.assign({}, state.BookTree, {name: node})
+  ADD_FILE (state, {name, node}) {
+    Vue.set(state.BookTree, name, node)
   }
 
 }
@@ -105,12 +103,12 @@ const actions = {
     var node = {
       name: child,
       fullPath: `${parent}/${child}`,
-      isVisible: false,
+      // should depend on sibling's visibility
+      isVisible: true,
       isFolder: false,
       content: ''
     }
-    console.log(node)
-    commit('ADD_FILE', child, node)
+    commit('ADD_FILE', {name: child, node: node})
   },
 
   // Probably does not belong in store
@@ -141,8 +139,8 @@ const actions = {
 }
 
 const getters = {
-  FileHierarchy: state => {
-    var flatArray = Object.assign({}, state.BookTree)
+  heirTree (state) {
+    var flatArray = JSON.parse(JSON.stringify(state.BookTree))
     var root
 
     for (var file in flatArray) {

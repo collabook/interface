@@ -10,6 +10,7 @@
 import Nodes from './Nodes'
 const {remote} = require('electron')
 const {Menu, MenuItem} = remote
+const prompt = require('electron-prompt')
 
 export default {
   name: 'FileTree',
@@ -29,9 +30,30 @@ export default {
 
     rightMenuHandle (e) {
       e.preventDefault()
-      const menu = new Menu()
       var par = this
-      menu.append(new MenuItem({label: 'Add new file', click () { par.$store.dispatch('add_file', {parent: e.target.id, child: 'name1'}) }}))
+      const menu = new Menu()
+      menu.append(new MenuItem({label: 'Add new file',
+        click () {
+          prompt({
+            title: 'Enter a name for the file',
+            label: 'Name:',
+            value: 'NewChapter',
+            inputAttrs: {
+              type: 'input',
+              required: true
+            },
+            type: 'input'
+          })
+            .then((r) => {
+              if (r === null) {
+                console.log('user cancelled')
+              } else {
+                console.log('result', r)
+                par.$store.dispatch('add_file', {parent: e.target.id, child: r})
+              }
+            })
+            .catch(console.error)
+        }}))
       menu.append(new MenuItem({type: 'separator'}))
       menu.append(new MenuItem({label: 'Delete file', click () { console.log(this) }}))
       menu.popup({window: remote.getCurrentWindow()})

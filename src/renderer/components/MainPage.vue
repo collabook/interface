@@ -34,8 +34,8 @@ export default {
     })
   },
   computed: {
-    heirTree: function () {
-      return this.$store.getters.FileHierarchy
+    heirTree () {
+      return this.$store.getters.heirTree
     }
   }
 }
