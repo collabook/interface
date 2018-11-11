@@ -2,12 +2,16 @@
   <div class="columns" id="wrapper">
     <FileTree class="column is-1" :files="heirTree"></FileTree>
     <EditorPage class="column is-11"></EditorPage>
+    <b-modal :active.sync="isComponentModalActive" :width="500" has-modal-card>
+      <new-book-modal v-bind="formProps"></new-book-modal>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import EditorPage from './EditorPage'
 import FileTree from './FileTree'
+import NewBookModal from './NewBookModal'
 import { messageBus } from '../main.js'
 import axios from 'axios'
 
@@ -15,11 +19,13 @@ export default {
   name: 'MainWindow',
   components: {
     EditorPage,
-    FileTree
+    FileTree,
+    NewBookModal
   },
   created: function () {
     messageBus.$on('newBook', () => {
-      this.$store.dispatch('new_book', {genre: 'fanatasy', name: 'ntw'})
+      // this.$store.dispatch('new_book', {genre: 'fanatasy', name: 'ntw'})
+      this.isComponentModalActive = true
     })
     // not a thing
     messageBus.$on('saveBook', (location) => {
@@ -36,6 +42,15 @@ export default {
   computed: {
     heirTree () {
       return this.$store.getters.heirTree
+    }
+  },
+  data () {
+    return {
+      isComponentModalActive: false,
+      formProps: {
+        email: 'email',
+        password: 'passss'
+      }
     }
   }
 }

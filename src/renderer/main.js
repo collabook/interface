@@ -9,9 +9,17 @@ import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
 // import util from 'util'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCoffee, faFolder } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 import { ipcRenderer } from 'electron'
 
 Vue.use(Buefy)
+
+library.add(faCoffee, faFolder)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 export const messageBus = new Vue({})
 

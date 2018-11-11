@@ -105,7 +105,7 @@ const actions = {
     commit('CONTENT_CHANGED', value)
   },
 
-  add_file ({ commit, dispatch }, {parent, child}) {
+  add_file ({ commit, dispatch }, {parent, child, isFolder}) {
     var parentPath = parent.split('/')
     var parentName = parentPath[parentPath.length - 1]
     dispatch('toggle_visibility', {filename: parentName, action: 'on'})
@@ -113,7 +113,7 @@ const actions = {
       name: child,
       fullPath: `${parent}/${child}`,
       isVisible: true,
-      isFolder: false,
+      isFolder: isFolder,
       content: ''
     }
     commit('ADD_FILE', {name: child, node: node})

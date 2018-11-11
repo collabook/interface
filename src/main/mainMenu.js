@@ -11,7 +11,11 @@ export default function mainMenu (mainWindow) {
         {
           label: 'New',
           accelerator: 'Ctrl+n',
-          click: () => { mainWindow.webContents.send('newBook') }
+          click: () => {
+            // ask for location
+            // ask for template
+            mainWindow.webContents.send('newBook')
+          }
         },
         {
           label: 'Open',

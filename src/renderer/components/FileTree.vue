@@ -32,29 +32,58 @@ export default {
       e.preventDefault()
       var par = this
       const menu = new Menu()
-      menu.append(new MenuItem({label: 'Add new file',
-        click () {
-          prompt({
-            title: 'Enter a name for the file',
-            label: 'Name:',
-            value: 'NewChapter',
-            inputAttrs: {
-              type: 'input',
-              required: true
-            },
-            type: 'input'
-          })
-            .then((r) => {
-              if (r === null) {
-                console.log('user cancelled')
-              } else {
-                console.log('result', r)
-                par.$store.dispatch('add_file', {parent: e.target.id, child: r})
-              }
+      var array = e.target.id.split('/')
+      var fileName = array[array.length - 1]
+      var node = this.$store.state.Book.BookTree[fileName]
+      if (node.isFolder === true) {
+        // TODO: remove this code repitition
+        menu.append(new MenuItem({label: 'Add new file',
+          click () {
+            prompt({
+              title: 'Enter a name for the file',
+              label: 'Name:',
+              value: 'NewFile',
+              inputAttrs: {
+                type: 'input',
+                required: true
+              },
+              type: 'input'
             })
-            .catch(console.error)
-        }}))
-      menu.append(new MenuItem({type: 'separator'}))
+              .then((r) => {
+                if (r === null) {
+                  console.log('user cancelled')
+                } else {
+                  console.log('result', r)
+                  par.$store.dispatch('add_file', {parent: e.target.id, child: r, isFolder: false})
+                }
+              })
+              .catch(console.error)
+          }}))
+        menu.append(new MenuItem({type: 'separator'}))
+        menu.append(new MenuItem({label: 'Add new Folder',
+          click () {
+            prompt({
+              title: 'Enter a name for the folder',
+              label: 'Name:',
+              value: 'NewFolder',
+              inputAttrs: {
+                type: 'input',
+                required: true
+              },
+              type: 'input'
+            })
+              .then((r) => {
+                if (r === null) {
+                  console.log('user cancelled')
+                } else {
+                  console.log('result', r)
+                  par.$store.dispatch('add_file', {parent: e.target.id, child: r, isFolder: true})
+                }
+              })
+              .catch(console.error)
+          }}))
+        menu.append(new MenuItem({type: 'separator'}))
+      }
       menu.append(new MenuItem({label: 'Delete file', click () { console.log(this) }}))
       menu.popup({window: remote.getCurrentWindow()})
     }
