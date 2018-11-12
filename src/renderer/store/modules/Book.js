@@ -5,7 +5,7 @@ const state = {
 
   // may be we should add a content changed from disk flag
   // this should be an array
-  BookTree: {
+  bookTree: {
 
     'Book': {
       name: 'Book',
@@ -55,9 +55,8 @@ const state = {
 
 const mutations = {
 
-  NEW_BOOK (state, context) {
-    state.bookname = context.name
-    state.files = context.files
+  NEW_BOOK (state, tree) {
+    state.bookTree = tree.bookTree
   },
 
   // Probably not needed
@@ -67,20 +66,20 @@ const mutations = {
 
   TOGGLE_VISIBILITY (state, {name, action}) {
     if (action === 'toggle') {
-      state.BookTree[name].isVisible = !state.BookTree[name].isVisible
+      state.bookTree[name].isVisible = !state.bookTree[name].isVisible
     } else if (action === 'on') {
-      state.BookTree[name].isVisible = true
+      state.bookTree[name].isVisible = true
     } else {
-      state.BookTree[name].isVisible = false
+      state.bookTree[name].isVisible = false
     }
   },
 
   CHANGE_CURRENT_FILE (state, filename) {
     if (state.activeFile !== '') {
-      state.BookTree[state.activeFile].content = state.currentContent
+      state.bookTree[state.activeFile].content = state.currentContent
     }
     state.activeFile = filename
-    state.currentContent = state.BookTree[filename].content
+    state.currentContent = state.bookTree[filename].content
   },
 
   CONTENT_CHANGED (state, value) {
@@ -88,7 +87,7 @@ const mutations = {
   },
 
   ADD_FILE (state, {name, node}) {
-    Vue.set(state.BookTree, name, node)
+    Vue.set(state.bookTree, name, node)
   }
 
 }
@@ -96,7 +95,7 @@ const mutations = {
 const actions = {
 
   change_current_file ({ commit, state }, filename) {
-    if (!state.BookTree[filename].isFolder) {
+    if (!state.bookTree[filename].isFolder) {
       commit('CHANGE_CURRENT_FILE', filename)
     }
   },
@@ -130,6 +129,7 @@ const actions = {
     axios.post(`http://127.0.0.1:8088/newbook`, context)
       .then((res) => {
         console.log(res.data)
+        commit('NEW_BOOK', res.data)
       })
       .catch((e) => {
         console.log(e)
@@ -137,10 +137,10 @@ const actions = {
   },
 
   toggle_visibility ({ commit, state }, {filename, action}) {
-    for (var file in state.BookTree) {
-      var path = state.BookTree[file].fullPath.split('/')
+    for (var file in state.bookTree) {
+      var path = state.bookTree[file].fullPath.split('/')
       if (path[path.length - 2] === filename) {
-        commit('TOGGLE_VISIBILITY', {name: state.BookTree[file].name, action: action})
+        commit('TOGGLE_VISIBILITY', {name: state.bookTree[file].name, action: action})
       }
     }
   }
@@ -148,14 +148,15 @@ const actions = {
 
 const getters = {
   heirTree (state) {
-    var flatArray = JSON.parse(JSON.stringify(state.BookTree))
+    var flatArray = JSON.parse(JSON.stringify(state.bookTree))
     var root
+    var file
 
-    for (var file in flatArray) {
-      if (!flatArray[file].hasOwnProperty('subfolders')) {
-        flatArray[file].subfolders = []
-      }
+    for (file in flatArray) {
+      flatArray[file].subfolders = []
+    }
 
+    for (file in flatArray) {
       var route = flatArray[file].fullPath.split('/')
       if (route.length !== 2) {
         var parent = route[route.length - 2]

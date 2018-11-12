@@ -34,7 +34,7 @@ export default {
       const menu = new Menu()
       var array = e.target.id.split('/')
       var fileName = array[array.length - 1]
-      var node = this.$store.state.Book.BookTree[fileName]
+      var node = this.$store.state.Book.bookTree[fileName]
       if (node.isFolder === true) {
         // TODO: remove this code repitition
         menu.append(new MenuItem({label: 'Add new file',
