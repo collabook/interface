@@ -62,11 +62,12 @@ export default {
   name: 'NewBookModal',
   methods: {
     showOpenDialog () {
-      var loc = dialog.showOpenDialog({properties: ['openDirectory']})
+      var loc = dialog.showOpenDialog({properties: ['openDirectory']})[0]
       this.location = loc
     },
     createBook () {
-      // axios.send location name category
+      var context = {location: this.location, name: this.name, genre: this.selection}
+      this.$store.dispatch('new_book', context)
     }
   },
   data () {

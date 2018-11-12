@@ -127,9 +127,9 @@ const actions = {
   },
 
   new_book ({ commit }, context) {
-    axios.post(`http://127.0.0.1:8088/newbook/${context.genre}/${context.name}`)
+    axios.post(`http://127.0.0.1:8088/newbook`, context)
       .then((res) => {
-        commit('NEW_BOOK', {name: context.name, files: res.data.files})
+        console.log(res.data)
       })
       .catch((e) => {
         console.log(e)
