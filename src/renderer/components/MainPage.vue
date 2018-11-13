@@ -1,6 +1,6 @@
 <template>
   <div class="columns" id="wrapper">
-    <FileTree class="column is-1" :files="heirTree"></FileTree>
+    <FileTree v-if="heirTree" class="column is-1" :files="heirTree"></FileTree>
     <EditorPage class="column is-11"></EditorPage>
     <b-modal :active.sync="isComponentModalActive" :width="500" has-modal-card>
       <new-book-modal v-bind="formProps"></new-book-modal>
@@ -15,6 +15,8 @@ import NewBookModal from './NewBookModal'
 import { messageBus } from '../main.js'
 import axios from 'axios'
 
+const { dialog } = require('electron').remote
+
 export default {
   name: 'MainWindow',
   components: {
@@ -24,7 +26,6 @@ export default {
   },
   created: function () {
     messageBus.$on('newBook', () => {
-      // this.$store.dispatch('new_book', {genre: 'fanatasy', name: 'ntw'})
       this.isComponentModalActive = true
     })
     // not a thing
@@ -37,6 +38,10 @@ export default {
     })
     messageBus.$on('save', () => {
       this.$store.dispatch('save_file')
+    })
+    messageBus.$on('openBook', () => {
+      var loc = dialog.showOpenDialog({properties: ['openDirectory']})[0]
+      this.$store.dispatch('open_book', loc)
     })
   },
   computed: {

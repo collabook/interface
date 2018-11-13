@@ -12,8 +12,6 @@ export default function mainMenu (mainWindow) {
           label: 'New',
           accelerator: 'Ctrl+n',
           click: () => {
-            // ask for location
-            // ask for template
             mainWindow.webContents.send('newBook')
           }
         },

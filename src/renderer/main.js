@@ -27,6 +27,10 @@ ipcRenderer.on('newBook', (event) => {
   messageBus.$emit('newBook')
 })
 
+ipcRenderer.on('openBook', (event) => {
+  messageBus.$emit('openBook')
+})
+
 ipcRenderer.on('saveBook', (event, location) => {
   messageBus.$emit('saveBook', location)
 })

@@ -68,6 +68,7 @@ export default {
     createBook () {
       var context = {location: this.location, name: this.name, genre: this.selection}
       this.$store.dispatch('new_book', context)
+      this.$parent.close()
     }
   },
   data () {

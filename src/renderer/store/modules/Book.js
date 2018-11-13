@@ -5,48 +5,7 @@ const state = {
 
   // may be we should add a content changed from disk flag
   // this should be an array
-  bookTree: {
-
-    'Book': {
-      name: 'Book',
-      fullPath: '/Book',
-      isVisible: true,
-      isFolder: true,
-      content: ''
-    },
-
-    'chapter1': {
-      name: 'chapter1',
-      fullPath: '/Book/chapter1',
-      isVisible: true,
-      isFolder: false,
-      content: 'Begining of chapter 1'
-    },
-
-    'chapter2': {
-      name: 'chapter2',
-      fullPath: '/Book/chapter2',
-      isVisible: true,
-      isFolder: false,
-      content: 'Begining of chapter 2'
-    },
-
-    'chapter3': {
-      name: 'chapter3',
-      fullPath: '/Book/chapter3',
-      isVisible: true,
-      isFolder: true,
-      content: ''
-    },
-
-    'section1': {
-      name: 'section1',
-      fullPath: '/Book/chapter3/section1',
-      isVisible: false,
-      isFolder: false,
-      content: 'Chapter 3 section 1 The Begining of the End'
-    }
-  },
+  bookTree: {},
 
   activeFile: '',
 
@@ -56,7 +15,11 @@ const state = {
 const mutations = {
 
   NEW_BOOK (state, tree) {
-    state.bookTree = tree.bookTree
+    state.bookTree = tree
+  },
+
+  OPEN_BOOK (state, tree) {
+    state.bookTree = tree
   },
 
   // Probably not needed
@@ -136,6 +99,17 @@ const actions = {
       })
   },
 
+  open_book ({ commit }, location) {
+    axios.post(`http://127.0.0.1:8088/openbook`, {location: location})
+      .then((res) => {
+        console.log(res.data)
+        commit('OPEN_BOOK', res.data)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  },
+
   toggle_visibility ({ commit, state }, {filename, action}) {
     for (var file in state.bookTree) {
       var path = state.bookTree[file].fullPath.split('/')
@@ -147,7 +121,11 @@ const actions = {
 }
 
 const getters = {
+  // needs proper checking whether bookTree is null
   heirTree (state) {
+    if (!state.bookTree) {
+      return null
+    }
     var flatArray = JSON.parse(JSON.stringify(state.bookTree))
     var root
     var file
