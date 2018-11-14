@@ -24,17 +24,15 @@ export default {
   methods: {
     handleClick (node) {
       // TODO: convert this into a single action
-      this.$store.dispatch('change_current_file', node.name)
-      this.$store.dispatch('toggle_visibility', {filename: node.name, action: 'toggle'})
+      this.$store.dispatch('change_current_file', node.id)
+      this.$store.dispatch('toggle_visibility', {id: node.id, action: 'toggle'})
     },
 
     rightMenuHandle (e) {
       e.preventDefault()
       var par = this
       const menu = new Menu()
-      var array = e.target.id.split('/')
-      var fileName = array[array.length - 1]
-      var node = this.$store.state.Book.bookTree[fileName]
+      var node = this.$store.state.Book.bookTree[e.target.id]
       if (node.isFolder === true) {
         // TODO: remove this code repitition
         menu.append(new MenuItem({label: 'Add new file',

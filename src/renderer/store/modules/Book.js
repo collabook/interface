@@ -27,39 +27,39 @@ const mutations = {
     state.filename.content = content
   },
 
-  TOGGLE_VISIBILITY (state, {name, action}) {
+  TOGGLE_VISIBILITY (state, {id, action}) {
     if (action === 'toggle') {
-      state.bookTree[name].isVisible = !state.bookTree[name].isVisible
+      state.bookTree[id].isVisible = !state.bookTree[id].isVisible
     } else if (action === 'on') {
-      state.bookTree[name].isVisible = true
+      state.bookTree[id].isVisible = true
     } else {
-      state.bookTree[name].isVisible = false
+      state.bookTree[id].isVisible = false
     }
   },
 
-  CHANGE_CURRENT_FILE (state, filename) {
+  CHANGE_CURRENT_FILE (state, id) {
     if (state.activeFile !== '') {
       state.bookTree[state.activeFile].content = state.currentContent
     }
-    state.activeFile = filename
-    state.currentContent = state.bookTree[filename].content
+    state.activeFile = id
+    state.currentContent = state.bookTree[id].content
   },
 
   CONTENT_CHANGED (state, value) {
     state.currentContent = value
   },
 
-  ADD_FILE (state, {name, node}) {
-    Vue.set(state.bookTree, name, node)
+  ADD_FILE (state, {id, node}) {
+    Vue.set(state.bookTree, id, node)
   }
 
 }
 
 const actions = {
 
-  change_current_file ({ commit, state }, filename) {
-    if (!state.bookTree[filename].isFolder) {
-      commit('CHANGE_CURRENT_FILE', filename)
+  change_current_file ({ commit, state }, id) {
+    if (!state.bookTree[id].isFolder) {
+      commit('CHANGE_CURRENT_FILE', id)
     }
   },
 
@@ -67,18 +67,20 @@ const actions = {
     commit('CONTENT_CHANGED', value)
   },
 
-  add_file ({ commit, dispatch }, {parent, child, isFolder}) {
-    var parentPath = parent.split('/')
-    var parentName = parentPath[parentPath.length - 1]
-    dispatch('toggle_visibility', {filename: parentName, action: 'on'})
+  add_file ({ commit, dispatch, state }, {parent, child, isFolder}) {
+    dispatch('toggle_visibility', {id: parent, action: 'on'})
+    var parentPath = state.bookTree[parent].fullPath
+    var id = Object.keys(state.bookTree).length + 1
     var node = {
+      id: id,
       name: child,
-      fullPath: `${parent}/${child}`,
+      parent: parseInt(parent),
+      fullPath: `${parentPath}/${child}`,
       isVisible: true,
       isFolder: isFolder,
       content: ''
     }
-    commit('ADD_FILE', {name: child, node: node})
+    commit('ADD_FILE', {id: id, node: node})
   },
 
   // Probably does not belong in store
@@ -110,11 +112,11 @@ const actions = {
       })
   },
 
-  toggle_visibility ({ commit, state }, {filename, action}) {
+  toggle_visibility ({ commit, state }, {id, action}) {
+    console.log('called')
     for (var file in state.bookTree) {
-      var path = state.bookTree[file].fullPath.split('/')
-      if (path[path.length - 2] === filename) {
-        commit('TOGGLE_VISIBILITY', {name: state.bookTree[file].name, action: action})
+      if (state.bookTree[file].parent === id) {
+        commit('TOGGLE_VISIBILITY', {id: file, action: action})
       }
     }
   }
@@ -135,13 +137,11 @@ const getters = {
     }
 
     for (file in flatArray) {
-      var route = flatArray[file].fullPath.split('/')
-      if (route.length !== 2) {
-        var parent = route[route.length - 2]
-        flatArray[parent].subfolders.push(flatArray[file])
-      }
-      if (route.length === 2) {
-        root = flatArray[file]
+      var currentFile = flatArray[file]
+      if (currentFile.parent === 0) {
+        root = currentFile
+      } else {
+        flatArray[currentFile.parent].subfolders.push(currentFile)
       }
     }
     return root
