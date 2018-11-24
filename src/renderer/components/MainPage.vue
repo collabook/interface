@@ -13,7 +13,6 @@ import EditorPage from './EditorPage'
 import FileTree from './FileTree'
 import NewBookModal from './NewBookModal'
 import { messageBus } from '../main.js'
-import axios from 'axios'
 
 const { dialog } = require('electron').remote
 
@@ -29,12 +28,8 @@ export default {
       this.isComponentModalActive = true
     })
     // not a thing
-    messageBus.$on('saveBook', (location) => {
-      console.log(this.$store.state.Book.file_heirarchy)
-      axios.post(`http://127.0.0.1:8088/savebook`, this.$store.state.Book.file_heirarchy)
-        .catch((e) => {
-          console.log(e)
-        })
+    messageBus.$on('saveBook', () => {
+      this.$store.dispatch('save_book')
     })
     messageBus.$on('save', () => {
       this.$store.dispatch('save_file')

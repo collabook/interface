@@ -17,14 +17,14 @@ export default function mainMenu (mainWindow) {
         },
         {
           label: 'Open',
-          accelerator: 'Ctrl-o',
+          accelerator: 'Ctrl+o',
           // show dialog to select location of book
           click: () => { mainWindow.webContents.send('openBook') }
         },
         {
-          label: 'Save',
+          label: 'Save Book',
           accelerator: 'Ctrl+s',
-          click: () => { mainWindow.webContents.send('save') }
+          click: () => { mainWindow.webContents.send('saveBook') }
         },
         {
           label: 'Quit',
