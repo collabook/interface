@@ -1,9 +1,9 @@
 <template>
   <div class="columns" id="wrapper">
-    <FileTree v-if="heirTree" class="column is-1" :files="heirTree"></FileTree>
+    <FileTree v-if="heirTree" class="column is-2" :files="heirTree"/></FileTree>
     <EditorPage class="column is-11"></EditorPage>
     <b-modal :active.sync="isComponentModalActive" :width="500" has-modal-card>
-      <new-book-modal v-bind="formProps"></new-book-modal>
+      <new-book-modal></new-book-modal>
     </b-modal>
   </div>
 </template>
@@ -46,11 +46,7 @@ export default {
   },
   data () {
     return {
-      isComponentModalActive: false,
-      formProps: {
-        email: 'email',
-        password: 'passss'
-      }
+      isComponentModalActive: false
     }
   }
 }
@@ -59,5 +55,10 @@ export default {
 <style scoped>
 #wrapper {
   height: 100%;
+}
+
+.column {
+  padding-right: 0em;
+  padding-left: 0em;
 }
 </style>

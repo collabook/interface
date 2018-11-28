@@ -1,8 +1,10 @@
 <template>
-  <div id="wrapper">
-    <ul class="tree-list">
-      <nodes :right-menu="rightMenuHandle" :handle-click="handleClick" :node="files"></nodes>
-    </ul>
+  <div id="filetree-wrapper">
+    <div id="file-tree">
+      <ul class="tree-list">
+        <nodes :right-menu="rightMenuHandle" :handle-click="handleClick" :node="files"></nodes>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -91,8 +93,14 @@ export default {
 </script>
 
 <style>
-#wrapper {
-  height: 100%;
+#file-tree {
+  height: 835px;
+  background-color:#f5f5f5;
+  padding: 10px;
+}
+
+#filetree-wrapper {
+  margin: 0px;
 }
 
 .tree-list ul {

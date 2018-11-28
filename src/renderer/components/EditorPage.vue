@@ -1,6 +1,7 @@
 <template>
-  <div id="wrapper">
-    <vue-editor v-model="content"></vue-editor>
+  <div id="editor-wrapper">
+      <vue-editor id="main-editor" v-model="content"></vue-editor>
+    </div>
   </div>
 </template>
 
@@ -37,9 +38,10 @@ export default {
 }
 </script>
 
-<style scoped>
-#wrapper {
-  height: 100%;
-  width: 75%;
+<style>
+#main-editor .ql-editor {
+  height: 785px;
+  padding: 0px;
 }
+
 </style>
