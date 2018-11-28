@@ -1,8 +1,7 @@
 <template>
   <div id="wrapper" v-if="node.isVisible">
       <li>
-        <!-- currently selected file should be highlighted -->
-        <span :id=node.id @contextmenu="rightMenu($event)" @click="handleClick(node)">
+        <span v-bind:class="isActive" :id=node.id @contextmenu="rightMenu($event)" @click="handleClick(node)">
           <font-awesome-icon icon="folder" v-if="node.isFolder"/>
           <font-awesome-icon icon="file" v-if="!node.isFolder" />
           {{ node.name }}
@@ -22,6 +21,13 @@ export default {
     node: Object,
     handleClick: Function,
     rightMenu: Function
+  },
+  computed: {
+    isActive: function () {
+      return {
+        active: this.$store.state.Book.activeFile === this.node.id
+      }
+    }
   }
 }
 </script>
@@ -29,6 +35,10 @@ export default {
 <style scoped>
 #wrapper {
   height: 100%;
+}
+
+.active {
+  color: #00d1b2;
 }
 
 </style>
