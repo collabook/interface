@@ -18,7 +18,6 @@ export default function mainMenu (mainWindow) {
         {
           label: 'Open',
           accelerator: 'Ctrl+o',
-          // show dialog to select location of book
           click: () => { mainWindow.webContents.send('openBook') }
         },
         {
@@ -32,7 +31,25 @@ export default function mainMenu (mainWindow) {
           click: () => { app.quit() }
         }
       ]
-    }]
+    },
+    {
+      label: 'View',
+      submenu: [
+        {
+          label: 'Corkboard',
+          click: () => {
+            mainWindow.webContents.send('corkboardView')
+          }
+        },
+        {
+          label: 'Toggle Dev Tools',
+          accelerator: 'F12',
+          role: 'toggledevtools'
+        }
+
+      ]
+    }
+  ]
 
   const mainMenu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(mainMenu)

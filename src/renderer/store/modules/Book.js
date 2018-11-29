@@ -13,21 +13,27 @@ const state = {
 
   content: {},
 
-  location: null
+  location: null,
+
+  synopsis: [],
+
+  modifiedFiles: new Set()
 }
 
 const mutations = {
 
-  NEW_BOOK (state, {tree, content, location}) {
+  NEW_BOOK (state, {tree, content, location, synopsis}) {
     state.bookTree = tree
     state.content = content
     state.location = location
+    state.synopsis = synopsis
   },
 
-  OPEN_BOOK (state, {tree, content, location}) {
+  OPEN_BOOK (state, {tree, content, location, synopsis}) {
     state.bookTree = tree
     state.content = content
     state.location = location
+    state.synopsis = synopsis
   },
 
   // Probably not needed
@@ -46,8 +52,9 @@ const mutations = {
   },
 
   CHANGE_CURRENT_FILE (state, id) {
-    if (state.activeFile !== null) {
+    if (state.activeFile !== null && state.content[state.activeFile] !== state.currentContent) {
       state.content[state.activeFile] = state.currentContent
+      state.modifiedFiles.add(state.activeFile)
     }
     state.activeFile = id
     state.currentContent = state.content[id]
@@ -62,8 +69,21 @@ const mutations = {
     if (node.isFolder === false) {
       state.content[id] = ''
     }
-  }
+  },
 
+  SYNOPSIS_CHANGE (state, payload) {
+    var newSynopsis = state.synopsis.map(item => {
+      if (item.id === payload.id) {
+        return {
+          id: payload.id,
+          value: payload.value
+        }
+      } else {
+        return item
+      }
+    })
+    Vue.set(state, 'synopsis', [...newSynopsis])
+  }
 }
 
 const actions = {
@@ -95,7 +115,6 @@ const actions = {
   },
 
   // Probably does not belong in store
-  // turn off ismodified
   save_file ({ commit, state }) {
     var context = {'file': state.activeFile, 'content': state.currentContent}
     axios.post(`http://127.0.0.1:8088/save`, context)
@@ -104,6 +123,12 @@ const actions = {
   // should return all contents and book tree
   // backend should iterate tree create files if doesn't exist
   // then save contents
+  //
+  // it should update ka current files content before saving book
+  //
+  // perhaps we can use this to save synopsis change as well
+  // if we do this we should check for some book content modified flag as we don't want to be sending
+  // the entire book to backend for some small synopsis update
   save_book ({ commit, state }) {
     axios.post(`http://127.0.0.1:8088/savebook`, {location: state.location, tree: state.bookTree, content: state.content})
       .then((res) => {
@@ -118,7 +143,7 @@ const actions = {
     axios.post(`http://127.0.0.1:8088/newbook`, context)
       .then((res) => {
         console.log(res.data)
-        commit('NEW_BOOK', {tree: res.data.tree, content: res.data.content, location: context.location})
+        commit('NEW_BOOK', {tree: res.data.tree, content: res.data.content, location: context.location, synopsis: res.data.synopsis})
       })
       .catch((e) => {
         console.log(e)
@@ -128,8 +153,7 @@ const actions = {
   open_book ({ commit }, location) {
     axios.post(`http://127.0.0.1:8088/openbook`, {location: location})
       .then((res) => {
-        console.log(res.data)
-        commit('OPEN_BOOK', {tree: res.data.tree, content: res.data.content, location: location})
+        commit('OPEN_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis})
       })
       .catch((e) => {
         console.log(e)
@@ -144,10 +168,11 @@ const actions = {
       }
     }
   }
+
 }
 
 const getters = {
-  // needs proper checking whether bookTree is null
+  // TODO: needs proper checking whether bookTree is null
   heirTree (state) {
     if (!state.bookTree) {
       return null
