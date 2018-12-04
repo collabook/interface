@@ -36,6 +36,9 @@ export default {
     messageBus.$on('corkboardView', () => {
       this.$router.push('corkboard')
     })
+    messageBus.$on('editorView', () => {
+      this.$router.push('startpage')
+    })
   },
   data () {
     return {

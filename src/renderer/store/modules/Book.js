@@ -17,7 +17,9 @@ const state = {
 
   synopsis: [],
 
-  modifiedFiles: new Set()
+  modifiedFiles: new Set(),
+
+  synopsisChanged: false
 }
 
 const mutations = {
@@ -52,6 +54,7 @@ const mutations = {
   },
 
   CHANGE_CURRENT_FILE (state, id) {
+    // here modified file flag should be checked instead of direct content
     if (state.activeFile !== null && state.content[state.activeFile] !== state.currentContent) {
       state.content[state.activeFile] = state.currentContent
       state.modifiedFiles.add(state.activeFile)
@@ -62,6 +65,7 @@ const mutations = {
 
   CONTENT_CHANGED (state, value) {
     state.currentContent = value
+    state.modifiedFiles.add([state.activeFile])
   },
 
   ADD_FILE (state, {id, node}) {
@@ -76,13 +80,22 @@ const mutations = {
       if (item.id === payload.id) {
         return {
           id: payload.id,
-          value: payload.value
+          content: payload.value
         }
       } else {
         return item
       }
     })
     Vue.set(state, 'synopsis', [...newSynopsis])
+    state.synopsisChanged = true
+  },
+
+  RESET_SYNOPSIS_CHANGE (state) {
+    state.synopsisChanged = false
+  },
+
+  RESET_CONTENT_CHANGED (state) {
+    state.modifiedFiles = new Set()
   }
 }
 
@@ -99,6 +112,7 @@ const actions = {
   },
 
   // i got an error while adding new file check it out
+  // TODO: new file should also create a new synopsis
   add_file ({ commit, dispatch, state }, {parent, child, isFolder}) {
     dispatch('toggle_visibility', {id: parent, action: 'on'})
     var parentPath = state.bookTree[parent].fullPath
@@ -130,20 +144,48 @@ const actions = {
   // if we do this we should check for some book content modified flag as we don't want to be sending
   // the entire book to backend for some small synopsis update
   save_book ({ commit, state }) {
-    axios.post(`http://127.0.0.1:8088/savebook`, {location: state.location, tree: state.bookTree, content: state.content})
-      .then((res) => {
-        console.log(res)
-      })
-      .catch((e) => {
-        console.log(e)
-      })
+    // we do this because state.currentContent stores the content viewable on the editor
+    // the changes in state.currentContent are only propogated to state.content when the user switches
+    // to another file
+    // this is a problem in cases like:
+    // user opens a file makes changes but presses ctrl+s without switching the current file to something else
+    // here the content of state.content won't be updated only the currentContent is updated
+    // changing current to file current file will propogate the changes
+    if (state.modifiedFiles.has([state.activeFile]) === true) {
+      commit('CHANGE_CURRENT_FILE', state.activeFile)
+    }
+
+    // TODO: only modified files should be sent to core
+    if (state.modifiedFiles.size > 0) {
+      axios.post(`http://127.0.0.1:8088/savebook`, {location: state.location, tree: state.bookTree, content: state.content})
+        .then((res) => {
+          commit('RESET_CONTENT_CHANGED')
+          console.log(res)
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    }
+
+    if (state.synopsisChanged === true) {
+      console.log(state.synopsis)
+      axios.post(`http://127.0.0.1:8088/savesynopsis`, {synopsis: state.synopsis, location: state.location})
+        .then((res) => {
+          commit('RESET_SYNOPSIS_CHANGE')
+          console.log(res)
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    }
   },
 
   new_book ({ commit }, context) {
+    var location = `${context.location}/${context.name}`
     axios.post(`http://127.0.0.1:8088/newbook`, context)
       .then((res) => {
         console.log(res.data)
-        commit('NEW_BOOK', {tree: res.data.tree, content: res.data.content, location: context.location, synopsis: res.data.synopsis})
+        commit('NEW_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis})
       })
       .catch((e) => {
         console.log(e)

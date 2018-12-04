@@ -36,6 +36,12 @@ export default function mainMenu (mainWindow) {
       label: 'View',
       submenu: [
         {
+          label: 'Editor',
+          click: () => {
+            mainWindow.webContents.send('editorView')
+          }
+        },
+        {
           label: 'Corkboard',
           click: () => {
             mainWindow.webContents.send('corkboardView')
