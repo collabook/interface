@@ -7,6 +7,8 @@ const state = {
   // this should be an array
   bookTree: {},
 
+  name: '',
+
   activeFile: null,
 
   currentContent: '',
@@ -19,23 +21,27 @@ const state = {
 
   modifiedFiles: new Set(),
 
-  synopsisChanged: false
+  synopsisChanged: false,
+
+  treeModified: false
 }
 
 const mutations = {
 
-  NEW_BOOK (state, {tree, content, location, synopsis}) {
+  NEW_BOOK (state, {tree, content, location, synopsis, name}) {
     state.bookTree = tree
     state.content = content
     state.location = location
     state.synopsis = synopsis
+    state.name = name
   },
 
-  OPEN_BOOK (state, {tree, content, location, synopsis}) {
+  OPEN_BOOK (state, {tree, content, location, synopsis, name}) {
     state.bookTree = tree
     state.content = content
     state.location = location
     state.synopsis = synopsis
+    state.name = name
   },
 
   // Probably not needed
@@ -57,7 +63,6 @@ const mutations = {
     // here modified file flag should be checked instead of direct content
     if (state.activeFile !== null && state.content[state.activeFile] !== state.currentContent) {
       state.content[state.activeFile] = state.currentContent
-      state.modifiedFiles.add(state.activeFile)
     }
     state.activeFile = id
     state.currentContent = state.content[id]
@@ -65,7 +70,7 @@ const mutations = {
 
   CONTENT_CHANGED (state, value) {
     state.currentContent = value
-    state.modifiedFiles.add([state.activeFile])
+    state.modifiedFiles.add(state.activeFile)
   },
 
   ADD_FILE (state, {id, node}) {
@@ -73,6 +78,12 @@ const mutations = {
     if (node.isFolder === false) {
       state.content[id] = ''
     }
+    state.treeModified = true
+  },
+
+  ADD_SYNOPSIS (state, {id, content}) {
+    state.synopsis = [...state.synopsis, {id: id, content: content}]
+    state.synopsisChanged = true
   },
 
   SYNOPSIS_CHANGE (state, payload) {
@@ -126,6 +137,7 @@ const actions = {
       isFolder: isFolder
     }
     commit('ADD_FILE', {id: id, node: node})
+    commit('ADD_SYNOPSIS', {id: id, content: ''})
   },
 
   // Probably does not belong in store
@@ -151,28 +163,21 @@ const actions = {
     // user opens a file makes changes but presses ctrl+s without switching the current file to something else
     // here the content of state.content won't be updated only the currentContent is updated
     // changing current to file current file will propogate the changes
-    if (state.modifiedFiles.has([state.activeFile]) === true) {
+    if (state.modifiedFiles.has(state.activeFile) === true) {
       commit('CHANGE_CURRENT_FILE', state.activeFile)
     }
 
     // TODO: only modified files should be sent to core
-    if (state.modifiedFiles.size > 0) {
-      axios.post(`http://127.0.0.1:8088/savebook`, {location: state.location, tree: state.bookTree, content: state.content})
+    if (state.modifiedFiles.size > 0 || state.treeModified === true || state.synopsisChanged === true) {
+      axios.post(`http://127.0.0.1:8088/savebook`,
+        {
+          location: state.location,
+          tree: state.bookTree,
+          content: state.content,
+          synopsis: state.synopsis
+        })
         .then((res) => {
           commit('RESET_CONTENT_CHANGED')
-          console.log(res)
-        })
-        .catch((e) => {
-          console.log(e)
-        })
-    }
-
-    if (state.synopsisChanged === true) {
-      console.log(state.synopsis)
-      axios.post(`http://127.0.0.1:8088/savesynopsis`, {synopsis: state.synopsis, location: state.location})
-        .then((res) => {
-          commit('RESET_SYNOPSIS_CHANGE')
-          console.log(res)
         })
         .catch((e) => {
           console.log(e)
@@ -184,8 +189,7 @@ const actions = {
     var location = `${context.location}/${context.name}`
     axios.post(`http://127.0.0.1:8088/newbook`, context)
       .then((res) => {
-        console.log(res.data)
-        commit('NEW_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis})
+        commit('NEW_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis, name: res.data.name})
       })
       .catch((e) => {
         console.log(e)
@@ -195,7 +199,7 @@ const actions = {
   open_book ({ commit }, location) {
     axios.post(`http://127.0.0.1:8088/openbook`, {location: location})
       .then((res) => {
-        commit('OPEN_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis})
+        commit('OPEN_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis, name: res.data.name})
       })
       .catch((e) => {
         console.log(e)
