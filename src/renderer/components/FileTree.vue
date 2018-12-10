@@ -2,7 +2,7 @@
   <div id="filetree-wrapper">
     <div id="file-tree">
       <ul class="tree-list">
-        <nodes :right-menu="rightMenuHandle" :handle-click="handleClick" :node="files"></nodes>
+        <nodes v-for="file in files" :right-menu="rightMenuHandle" :handle-click="handleClick" :node="file"></nodes>
       </ul>
     </div>
   </div>
@@ -20,7 +20,7 @@ export default {
     Nodes
   },
   props: {
-    files: Object,
+    files: Array,
     node: Object
   },
   methods: {
@@ -101,6 +101,10 @@ export default {
 
 #filetree-wrapper {
   margin: 0px;
+}
+
+.tree-list {
+  margin-left: 5px;
 }
 
 .tree-list ul {

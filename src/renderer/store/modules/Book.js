@@ -122,8 +122,6 @@ const actions = {
     commit('CONTENT_CHANGED', value)
   },
 
-  // i got an error while adding new file check it out
-  // TODO: new file should also create a new synopsis
   add_file ({ commit, dispatch, state }, {parent, child, isFolder}) {
     dispatch('toggle_visibility', {id: parent, action: 'on'})
     var parentPath = state.bookTree[parent].fullPath
@@ -134,7 +132,8 @@ const actions = {
       parent: parseInt(parent),
       fullPath: `${parentPath}/${child}`,
       isVisible: true,
-      isFolder: isFolder
+      isFolder: isFolder,
+      isResearch: state.bookTree[parent].isResearch
     }
     commit('ADD_FILE', {id: id, node: node})
     commit('ADD_SYNOPSIS', {id: id, content: ''})
@@ -189,7 +188,14 @@ const actions = {
     var location = `${context.location}/${context.name}`
     axios.post(`http://127.0.0.1:8088/newbook`, context)
       .then((res) => {
-        commit('NEW_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis, name: res.data.name})
+        commit('NEW_BOOK',
+          {
+            tree: res.data.tree,
+            content: res.data.content,
+            location: location,
+            synopsis: res.data.synopsis,
+            name: res.data.name
+          })
       })
       .catch((e) => {
         console.log(e)
@@ -218,13 +224,12 @@ const actions = {
 }
 
 const getters = {
-  // TODO: needs proper checking whether bookTree is null
   heirTree (state) {
     if (!state.bookTree) {
       return null
     }
     var flatArray = JSON.parse(JSON.stringify(state.bookTree))
-    var root
+    var root = []
     var file
 
     for (file in flatArray) {
@@ -234,7 +239,7 @@ const getters = {
     for (file in flatArray) {
       var currentFile = flatArray[file]
       if (currentFile.parent === 0) {
-        root = currentFile
+        root.push(currentFile)
       } else {
         flatArray[currentFile.parent].subfolders.push(currentFile)
       }
