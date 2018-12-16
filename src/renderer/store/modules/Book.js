@@ -23,17 +23,28 @@ const state = {
 
   synopsisChanged: false,
 
-  treeModified: false
+  treeModified: false,
+
+  author: '',
+
+  email: ''
 }
 
 const mutations = {
 
+  // open book new book mutations are the same
+  //
   NEW_BOOK (state, {tree, content, location, synopsis, name}) {
     state.bookTree = tree
     state.content = content
     state.location = location
     state.synopsis = synopsis
     state.name = name
+    state.synopsisChanged = false
+    state.treeModified = false
+    state.modifiedFiles = new Set()
+    state.activeFile = null
+    state.currentContent = ''
   },
 
   OPEN_BOOK (state, {tree, content, location, synopsis, name}) {
@@ -42,6 +53,11 @@ const mutations = {
     state.location = location
     state.synopsis = synopsis
     state.name = name
+    state.synopsisChanged = false
+    state.treeModified = false
+    state.modifiedFiles = new Set()
+    state.activeFile = null
+    state.currentContent = ''
   },
 
   // Probably not needed
@@ -107,6 +123,11 @@ const mutations = {
 
   RESET_CONTENT_CHANGED (state) {
     state.modifiedFiles = new Set()
+  },
+
+  SET_AUTHOR (state, {name, email}) {
+    state.author = name
+    state.email = email
   }
 }
 
@@ -219,8 +240,51 @@ const actions = {
         commit('TOGGLE_VISIBILITY', {id: file, action: action})
       }
     }
-  }
+  },
 
+  new_author ({ commit, state }, {name, email}) {
+    axios.post(`http://localhost:8088/author`, {name: name, email: email})
+      .then((res) => {
+        commit('SET_AUTHOR', {name, email})
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  },
+
+  /*
+   * Version Control Stuff
+   */
+
+  git_init ({ commit, state }) {
+    axios.post(`http://localhost:8088/gitinit`, {location: state.location})
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  },
+
+  git_add ({ commit, state }) {
+    axios.post(`http://localhost:8088/gitadd`, {location: state.location})
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  },
+
+  git_commit ({ commit, state }, message) {
+    axios.post(`http://localhost:8088/gitcommit`, {location: state.location, message: message})
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  }
 }
 
 const getters = {

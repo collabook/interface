@@ -47,6 +47,18 @@ ipcRenderer.on('editorView', () => {
   messageBus.$emit('editorView')
 })
 
+ipcRenderer.on('gitInit', () => {
+  messageBus.$emit('gitInit')
+})
+
+ipcRenderer.on('gitTrack', () => {
+  messageBus.$emit('gitTrack')
+})
+
+ipcRenderer.on('gitCommit', () => {
+  messageBus.$emit('gitCommit')
+})
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false

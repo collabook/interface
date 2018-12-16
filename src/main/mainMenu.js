@@ -48,11 +48,63 @@ export default function mainMenu (mainWindow) {
           }
         },
         {
+          label: 'Diff',
+          click: () => {
+            console.log('diff')
+          }
+        },
+        {
           label: 'Toggle Dev Tools',
           accelerator: 'F12',
           role: 'toggledevtools'
         }
-
+      ]
+    },
+    {
+      label: 'VCS',
+      submenu: [
+        {
+          label: 'Init',
+          click: () => {
+            mainWindow.webContents.send('gitInit')
+          }
+        },
+        {
+          label: 'Track All',
+          click: () => {
+            mainWindow.webContents.send('gitTrack')
+          }
+        },
+        {
+          label: 'Commit',
+          click: () => {
+            mainWindow.webContents.send('gitCommit')
+          }
+        },
+        {
+          label: 'Create Branch',
+          click: () => {
+            console.log('branch')
+          }
+        },
+        {
+          label: 'Add remote',
+          click: () => {
+            console.log('add remote')
+          }
+        },
+        {
+          label: 'Push',
+          click: () => {
+            console.log('push')
+          }
+        },
+        {
+          label: 'Pull',
+          click: () => {
+            console.log('pull')
+          }
+        }
       ]
     }
   ]
