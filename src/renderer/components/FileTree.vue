@@ -5,27 +5,41 @@
         <nodes v-for="file in files" :right-menu="rightMenuHandle" :handle-click="handleClick" :node="file"></nodes>
       </ul>
     </div>
+    <b-modal :active.sync="isNewNodeModalActive" :width="500" has-modal-card>
+      <new-node-modal v-bind:parent="parent" v-bind:isFolder="isFolder"></new-node-modal>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import Nodes from './Nodes'
+import NewNodeModal from './NewNodeModal'
 const {remote} = require('electron')
 const {Menu, MenuItem} = remote
-const prompt = require('electron-prompt')
 
 export default {
   name: 'FileTree',
+
   components: {
-    Nodes
+    Nodes,
+    NewNodeModal
   },
+
   props: {
     files: Array,
     node: Object
   },
+
+  data () {
+    return {
+      isNewNodeModalActive: false,
+      isFolder: false,
+      parent: null
+    }
+  },
+
   methods: {
     handleClick (node) {
-      // TODO: convert this into a single action
       this.$store.dispatch('change_current_file', node.id)
       this.$store.dispatch('toggle_visibility', {id: node.id, action: 'toggle'})
     },
@@ -36,55 +50,23 @@ export default {
       const menu = new Menu()
       var node = this.$store.state.Book.bookTree[e.target.id]
       if (node.isFolder === true) {
-        // TODO: remove this code repitition
         menu.append(new MenuItem({label: 'Add new file',
           click () {
-            prompt({
-              title: 'Enter a name for the file',
-              label: 'Name:',
-              value: 'NewFile',
-              inputAttrs: {
-                type: 'input',
-                required: true
-              },
-              type: 'input'
-            })
-              .then((r) => {
-                if (r === null) {
-                  console.log('user cancelled')
-                } else {
-                  console.log('result', r)
-                  par.$store.dispatch('add_file', {parent: e.target.id, child: r, isFolder: false})
-                }
-              })
-              .catch(console.error)
+            par.isNewNodeModalActive = true
+            par.parent = e.target.id
+            par.isFolder = false
           }}))
         menu.append(new MenuItem({type: 'separator'}))
         menu.append(new MenuItem({label: 'Add new Folder',
           click () {
-            prompt({
-              title: 'Enter a name for the folder',
-              label: 'Name:',
-              value: 'NewFolder',
-              inputAttrs: {
-                type: 'input',
-                required: true
-              },
-              type: 'input'
-            })
-              .then((r) => {
-                if (r === null) {
-                  console.log('user cancelled')
-                } else {
-                  console.log('result', r)
-                  par.$store.dispatch('add_file', {parent: e.target.id, child: r, isFolder: true})
-                }
-              })
-              .catch(console.error)
+            par.isNewNodeModalActive = true
+            console.log('sad')
+            par.parent = e.target.id
+            par.isFolder = true
           }}))
         menu.append(new MenuItem({type: 'separator'}))
       }
-      menu.append(new MenuItem({label: 'Delete file', click () { console.log(this) }}))
+      menu.append(new MenuItem({label: 'Delete file', click () { console.log(this) }})) // TODO
       menu.popup({window: remote.getCurrentWindow()})
     }
   }
