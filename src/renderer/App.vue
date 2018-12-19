@@ -84,6 +84,9 @@ export default {
     messageBus.$on('gitCommit', () => {
       this.isNewCommitModalActive = true
     })
+    messageBus.$on('gitLog', () => {
+      this.$router.push('commitlog')
+    })
   }
 }
 </script>

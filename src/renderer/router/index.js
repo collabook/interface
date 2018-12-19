@@ -16,6 +16,11 @@ export default new Router({
       component: require('@/components/Corkboard').default
     },
     {
+      path: '/commitlog',
+      name: 'CommitLog',
+      component: require('@/components/CommitLog').default
+    },
+    {
       path: '*',
       redirect: '/'
     }

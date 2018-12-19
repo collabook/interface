@@ -70,7 +70,7 @@ export default function mainMenu (mainWindow) {
           }
         },
         {
-          label: 'Track All',
+          label: 'Stage Changes',
           click: () => {
             mainWindow.webContents.send('gitTrack')
           }
@@ -79,6 +79,12 @@ export default function mainMenu (mainWindow) {
           label: 'Commit',
           click: () => {
             mainWindow.webContents.send('gitCommit')
+          }
+        },
+        {
+          label: 'Log',
+          click: () => {
+            mainWindow.webContents.send('gitLog')
           }
         },
         {
