@@ -28,9 +28,6 @@ export default {
   },
   methods: {
     checkout (e) {
-      console.log('checkout')
-      console.log(e.target.id)
-      console.log(this.$store.state.Book.location)
       axios.post(`http://localhost:8088/gitcheckout`, {
         location: this.$store.state.Book.location,
         oid: e.target.id.toString()
@@ -40,7 +37,7 @@ export default {
           this.$router.push('startpage')
         })
         .catch((err) => {
-          console.log(err)
+          this.$dialog.alert(err.response.data)
         })
     }
   },
@@ -50,7 +47,7 @@ export default {
         this.logs = res.data
       })
       .catch((e) => {
-        console.log(e)
+        this.$dialog.alert(e.response.data)
       })
   }
 }

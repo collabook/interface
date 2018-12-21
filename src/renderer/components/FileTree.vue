@@ -2,7 +2,7 @@
   <div id="filetree-wrapper">
     <div id="file-tree">
       <ul class="tree-list">
-        <nodes v-for="file in files" :right-menu="rightMenuHandle" :handle-click="handleClick" :node="file"></nodes>
+        <nodes v-for="file in files" :right-menu="rightMenuHandle" :handle-click="handleClick" :node="file" :key="file.id"></nodes>
       </ul>
     </div>
     <b-modal :active.sync="isNewNodeModalActive" :width="500" has-modal-card>

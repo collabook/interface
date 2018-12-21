@@ -96,7 +96,7 @@ export default function mainMenu (mainWindow) {
         {
           label: 'Add remote',
           click: () => {
-            console.log('add remote')
+            mainWindow.webContents.send('gitAddRemote')
           }
         },
         {
@@ -109,6 +109,17 @@ export default function mainMenu (mainWindow) {
           label: 'Pull',
           click: () => {
             console.log('pull')
+          }
+        }
+      ]
+    },
+    {
+      label: 'Options',
+      submenu: [
+        {
+          label: 'User',
+          click: () => {
+            mainWindow.webContents.send('userSettings')
           }
         }
       ]

@@ -6,23 +6,6 @@
         </header>
         <section class="modal-card-body">
 
-          <label class="label">Location</label>
-          <b-field>
-            <b-input
-                   type="text"
-                    :value="location"
-                    placeholder="Enter location to save book"
-                    v-model="location"
-                    expanded
-                    required>
-            </b-input>
-            <p class="control">
-                <button class="button is-primary" @click="showOpenDialog">
-                  <font-awesome-icon icon="folder"></font-awesome-icon>
-                </button>
-            </p>
-
-          </b-field>
 
           <b-field label="Name">
             <b-input
@@ -45,6 +28,24 @@
               </option>
             </b-select>
           </b-field>
+
+          <label class="label">Location</label>
+          <b-field>
+            <b-input
+                   type="text"
+                    :value="location"
+                    placeholder="Enter location to save book"
+                    v-model="location"
+                    required>
+            </b-input>
+            <p class="control">
+                <button class="button is-primary" @click="showOpenDialog">
+                  <font-awesome-icon icon="folder"></font-awesome-icon>
+                </button>
+            </p>
+
+          </b-field>
+
 
         </section>
         <footer class="modal-card-foot">

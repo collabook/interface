@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Vue from 'vue'
+import { messageBus } from './../../main.js'
 
 const state = {
 
@@ -200,7 +201,7 @@ const actions = {
           commit('RESET_CONTENT_CHANGED')
         })
         .catch((e) => {
-          console.log(e)
+          messageBus.$emit('showError', e.response.data)
         })
     }
   },
@@ -219,7 +220,7 @@ const actions = {
           })
       })
       .catch((e) => {
-        console.log(e)
+        messageBus.$emit('showError', e.response.data)
       })
   },
 
@@ -229,7 +230,7 @@ const actions = {
         commit('OPEN_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis, name: res.data.name})
       })
       .catch((e) => {
-        console.log(e)
+        messageBus.$emit('showError', e.response.data)
       })
   },
 
@@ -242,47 +243,34 @@ const actions = {
     }
   },
 
-  new_author ({ commit, state }, {name, email}) {
-    axios.post(`http://localhost:8088/author`, {name: name, email: email})
+  new_author ({ commit, state }, context) {
+    var payload = {name: context.name, email: context.email}
+    if (context.auth_type === 'Plain') {
+      payload.auth = {
+        type: context.auth_type,
+        args: {
+          user: context.username,
+          pass: context.password
+        }
+      }
+    } else if (context.auth_type === 'SSHAgent') {
+      payload.auth = {
+        type: context.auth_type
+      }
+    } else {
+      payload.auth = {
+        type: context.auth_type,
+        args: {
+          path: context.path
+        }
+      }
+    }
+    axios.post(`http://localhost:8088/author`, payload)
       .then((res) => {
-        commit('SET_AUTHOR', {name, email})
+        commit('SET_AUTHOR', {name: context.name, email: context.email})
       })
       .catch((e) => {
-        console.log(e)
-      })
-  },
-
-  /*
-   * Version Control Stuff
-   */
-
-  git_init ({ commit, state }) {
-    axios.post(`http://localhost:8088/gitinit`, {location: state.location})
-      .then((res) => {
-        console.log(res)
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  },
-
-  git_add ({ commit, state }) {
-    axios.post(`http://localhost:8088/gitadd`, {location: state.location})
-      .then((res) => {
-        console.log(res)
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  },
-
-  git_commit ({ commit, state }, message) {
-    axios.post(`http://localhost:8088/gitcommit`, {location: state.location, message: message})
-      .then((res) => {
-        console.log(res)
-      })
-      .catch((e) => {
-        console.log(e)
+        messageBus.$emit('showError', e.response.data)
       })
   }
 }

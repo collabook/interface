@@ -10,6 +10,9 @@
     <b-modal :active.sync="isNewCommitModalActive" :width="500" has-modal-card>
       <new-commit-modal></new-commit-modal>
     </b-modal>
+    <b-modal :active.sync="isNewRemoteModalActive" :width="500" has-modal-card>
+      <new-remote-modal></new-remote-modal>
+    </b-modal>
   </div>
 </template>
 
@@ -18,6 +21,8 @@ import axios from 'axios'
 import NewBookModal from '@/components/NewBookModal'
 import NewAuthorModal from '@/components/NewAuthorModal'
 import NewCommitModal from '@/components/NewCommitModal'
+import NewRemoteModal from '@/components/NewRemoteModal'
+
 import { messageBus } from './main.js'
 const { dialog } = require('electron').remote
 
@@ -26,14 +31,16 @@ export default {
   components: {
     NewBookModal,
     NewAuthorModal,
-    NewCommitModal
+    NewCommitModal,
+    NewRemoteModal
   },
 
   data () {
     return {
       isNewBookModalActive: false,
       isNewAuthorModalActive: false,
-      isNewCommitModalActive: false
+      isNewCommitModalActive: false,
+      isNewRemoteModalActive: false
     }
   },
 
@@ -86,6 +93,15 @@ export default {
     })
     messageBus.$on('gitLog', () => {
       this.$router.push('commitlog')
+    })
+    messageBus.$on('userSettings', () => {
+      this.isNewAuthorModalActive = true
+    })
+    messageBus.$on('gitAddRemote', () => {
+      this.isNewRemoteModalActive = true
+    })
+    messageBus.$on('showError', (msg) => {
+      this.$dialog.alert(msg)
     })
   }
 }

@@ -23,6 +23,9 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 export const messageBus = new Vue({})
 
+// Vue.use(messageBus)
+Vue.prototype.$messageBus = messageBus
+
 ipcRenderer.on('newBook', (event) => {
   messageBus.$emit('newBook')
 })
@@ -63,6 +66,14 @@ ipcRenderer.on('gitLog', () => {
   messageBus.$emit('gitLog')
 })
 
+ipcRenderer.on('userSettings', () => {
+  messageBus.$emit('userSettings')
+})
+
+ipcRenderer.on('gitAddRemote', () => {
+  messageBus.$emit('gitAddRemote')
+})
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
@@ -72,5 +83,6 @@ new Vue({
   components: { App },
   router,
   store,
+  messageBus,
   template: '<App/>'
 }).$mount('#app')

@@ -33,6 +33,7 @@ export default {
   methods: {
     commit () {
       this.$store.dispatch('git_commit', this.message)
+        .catch(e => this.$dialog.alert(e.response.data))
       this.$parent.close()
     }
   },
