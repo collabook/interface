@@ -1,6 +1,6 @@
 <template>
   <div class="columns" id="wrapper">
-    <FileTree v-if="heirTree" class="column mycolumn is-2" :files="heirTree"/></FileTree>
+    <FileTree class="column mycolumn is-2" :files="heirTree"/></FileTree>
     <EditorPage class="column mycolumn is-11"></EditorPage>
   </div>
 </template>

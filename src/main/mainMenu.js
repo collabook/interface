@@ -21,9 +21,9 @@ export default function mainMenu (mainWindow) {
           click: () => { mainWindow.webContents.send('openBook') }
         },
         {
-          label: 'Save Book',
+          label: 'Save',
           accelerator: 'Ctrl+s',
-          click: () => { mainWindow.webContents.send('saveBook') }
+          click: () => { mainWindow.webContents.send('save') }
         },
         {
           label: 'Quit',

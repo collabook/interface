@@ -69,7 +69,11 @@ export default {
       this.$store.dispatch('save_book')
     })
     messageBus.$on('save', () => {
-      this.$store.dispatch('save_file')
+      if (this.$router.currentRoute.name === 'startpage') {
+        this.$store.dispatch('save_file')
+      } else {
+        messageBus.$emit('saveSynopsis')
+      }
     })
     messageBus.$on('openBook', () => {
       var loc = dialog.showOpenDialog({properties: ['openDirectory']})[0]

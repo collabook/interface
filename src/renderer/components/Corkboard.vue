@@ -2,7 +2,7 @@
   <div class="columns" id="synopsis-container">
     <div :id="item.id" class="column is-3" v-for="item in synopsis" :key="item.id">
       <div class="box notification is-primary">
-        <p class="title">{{ files[item.id].name }}</p>
+        <p>{{ files[item.id].relPath == ""? files[item.id].name : files[item.id].relPath }}</p>
         <textarea :id="item.id" type="text" :value="item.content" @input="updateSynopsis" rows="3" cols="32"></textarea>
       </div>
     </div>
@@ -10,23 +10,27 @@
 </template>
 
 <script>
-// TODO: would like to have random colors on synopsis box
 export default {
   name: 'Corkboard',
   data () {
     return {
-      synopsis: this.$store.state.Book.synopsis,
-      files: this.$store.state.Book.bookTree
+      synopsis: this.$store.getters.synopsis,
+      files: this.$store.state.Book.files
     }
   },
   methods: {
     updateSynopsis (e) {
       this.$store.commit({
         type: 'SYNOPSIS_CHANGE',
-        id: parseInt(e.target.id),
+        id: e.target.id,
         value: e.target.value
       })
     }
+  },
+  created () {
+    this.$messageBus.$on('saveSynopsis', () => {
+      this.$store.dispatch('save_synopsis', document.activeElement.id)
+    })
   }
 }
 </script>

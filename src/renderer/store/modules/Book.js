@@ -4,9 +4,7 @@ import { messageBus } from './../../main.js'
 
 const state = {
 
-  // may be we should add a content changed from disk flag
-  // this should be an array
-  bookTree: {},
+  files: {},
 
   name: '',
 
@@ -14,11 +12,7 @@ const state = {
 
   currentContent: '',
 
-  content: {},
-
   location: null,
-
-  synopsis: [],
 
   modifiedFiles: new Set(),
 
@@ -35,25 +29,12 @@ const mutations = {
 
   // open book new book mutations are the same
   //
-  NEW_BOOK (state, {tree, content, location, synopsis, name}) {
-    state.bookTree = tree
-    state.content = content
+  NEW_BOOK (state, {files, location, name}) {
+    state.files = files
     state.location = location
-    state.synopsis = synopsis
     state.name = name
-    state.synopsisChanged = false
-    state.treeModified = false
-    state.modifiedFiles = new Set()
-    state.activeFile = null
-    state.currentContent = ''
-  },
 
-  OPEN_BOOK (state, {tree, content, location, synopsis, name}) {
-    state.bookTree = tree
-    state.content = content
-    state.location = location
-    state.synopsis = synopsis
-    state.name = name
+    // set some default values
     state.synopsisChanged = false
     state.treeModified = false
     state.modifiedFiles = new Set()
@@ -68,21 +49,21 @@ const mutations = {
 
   TOGGLE_VISIBILITY (state, {id, action}) {
     if (action === 'toggle') {
-      state.bookTree[id].isVisible = !state.bookTree[id].isVisible
+      state.files[id].isVisible = !state.files[id].isVisible
     } else if (action === 'on') {
-      state.bookTree[id].isVisible = true
+      state.files[id].isVisible = true
     } else {
-      state.bookTree[id].isVisible = false
+      state.files[id].isVisible = false
     }
   },
 
   CHANGE_CURRENT_FILE (state, id) {
     // here modified file flag should be checked instead of direct content
-    if (state.activeFile !== null && state.content[state.activeFile] !== state.currentContent) {
-      state.content[state.activeFile] = state.currentContent
+    if (state.activeFile !== null && state.files[state.activeFile].content !== state.currentContent) {
+      state.files[state.activeFile].content = state.currentContent
     }
     state.activeFile = id
-    state.currentContent = state.content[id]
+    state.currentContent = state.files[id].content
   },
 
   CONTENT_CHANGED (state, value) {
@@ -91,11 +72,7 @@ const mutations = {
   },
 
   ADD_FILE (state, {id, node}) {
-    Vue.set(state.bookTree, id, node)
-    if (node.isFolder === false) {
-      state.content[id] = ''
-    }
-    state.treeModified = true
+    Vue.set(state.files, id, node)
   },
 
   ADD_SYNOPSIS (state, {id, content}) {
@@ -104,6 +81,8 @@ const mutations = {
   },
 
   SYNOPSIS_CHANGE (state, payload) {
+    state.files[payload.id].synopsis = payload.value
+    /*
     var newSynopsis = state.synopsis.map(item => {
       if (item.id === payload.id) {
         return {
@@ -116,6 +95,7 @@ const mutations = {
     })
     Vue.set(state, 'synopsis', [...newSynopsis])
     state.synopsisChanged = true
+    */
   },
 
   RESET_SYNOPSIS_CHANGE (state) {
@@ -135,7 +115,7 @@ const mutations = {
 const actions = {
 
   change_current_file ({ commit, state }, id) {
-    if (!state.bookTree[id].isFolder) {
+    if (!state.files[id].isFolder) {
       commit('CHANGE_CURRENT_FILE', id)
     }
   },
@@ -146,25 +126,39 @@ const actions = {
 
   add_file ({ commit, dispatch, state }, {parent, child, isFolder}) {
     dispatch('toggle_visibility', {id: parent, action: 'on'})
-    var parentPath = state.bookTree[parent].fullPath
-    var id = Object.keys(state.bookTree).length + 1
-    var node = {
-      id: id,
+
+    axios.post(`http://localhost:8088/newfile`, {
+      parent_id: parent,
       name: child,
-      parent: parseInt(parent),
-      fullPath: `${parentPath}/${child}`,
-      isVisible: true,
-      isFolder: isFolder,
-      isResearch: state.bookTree[parent].isResearch
-    }
-    commit('ADD_FILE', {id: id, node: node})
-    commit('ADD_SYNOPSIS', {id: id, content: ''})
+      is_folder: isFolder,
+      location: state.location,
+      parent_rel_path: state.files[parent].relPath
+    })
+      .then(res => {
+        commit('ADD_FILE', {id: res.data.id, node: res.data})
+      })
+      .catch(e => {
+        messageBus.$emit('showError', e.response.data)
+      })
   },
 
   // Probably does not belong in store
   save_file ({ commit, state }) {
-    var context = {'file': state.activeFile, 'content': state.currentContent}
-    axios.post(`http://127.0.0.1:8088/save`, context)
+    axios.post(`http://127.0.0.1:8088/savefile`, {
+      rel_path: state.files[state.activeFile].relPath,
+      location: state.location,
+      content: state.currentContent
+    })
+      .catch(e => messageBus.$emit('showError', e.response.data))
+  },
+
+  save_synopsis ({ commit, state }, id) {
+    axios.post(`http://localhost:8088/savesynopsis`, {
+      location: state.location,
+      synopsis: state.files[id].synopsis,
+      id: id
+    })
+      .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
   // should return all contents and book tree
@@ -207,15 +201,12 @@ const actions = {
   },
 
   new_book ({ commit }, context) {
-    var location = `${context.location}/${context.name}`
     axios.post(`http://127.0.0.1:8088/newbook`, context)
       .then((res) => {
         commit('NEW_BOOK',
           {
-            tree: res.data.tree,
-            content: res.data.content,
-            location: location,
-            synopsis: res.data.synopsis,
+            files: res.data.files,
+            location: res.data.location,
             name: res.data.name
           })
       })
@@ -227,7 +218,11 @@ const actions = {
   open_book ({ commit }, location) {
     axios.post(`http://127.0.0.1:8088/openbook`, {location: location})
       .then((res) => {
-        commit('OPEN_BOOK', {tree: res.data.tree, content: res.data.content, location: location, synopsis: res.data.synopsis, name: res.data.name})
+        commit('NEW_BOOK', {
+          files: res.data.files,
+          location: res.data.location,
+          name: res.data.name
+        })
       })
       .catch((e) => {
         messageBus.$emit('showError', e.response.data)
@@ -236,8 +231,8 @@ const actions = {
 
   toggle_visibility ({ commit, state }, {id, action}) {
     // this should probably be done as an action of opening folder and closing folder
-    for (var file in state.bookTree) {
-      if (state.bookTree[file].parent === id) {
+    for (var file in state.files) {
+      if (state.files[file].parent === id) {
         commit('TOGGLE_VISIBILITY', {id: file, action: action})
       }
     }
@@ -277,10 +272,10 @@ const actions = {
 
 const getters = {
   heirTree (state) {
-    if (!state.bookTree) {
+    if (!state.files) {
       return null
     }
-    var flatArray = JSON.parse(JSON.stringify(state.bookTree))
+    var flatArray = JSON.parse(JSON.stringify(state.files))
     var root = []
     var file
 
@@ -290,13 +285,20 @@ const getters = {
 
     for (file in flatArray) {
       var currentFile = flatArray[file]
-      if (currentFile.parent === 0) {
+      if (currentFile.parent === '0') {
         root.push(currentFile)
       } else {
         flatArray[currentFile.parent].subfolders.push(currentFile)
       }
     }
     return root
+  },
+
+  synopsis (state) {
+    var synopsis = []
+    var ids = Object.keys(state.files)
+    ids.map(id => synopsis.push({id: id, content: state.files[id].synopsis}))
+    return synopsis
   }
 }
 

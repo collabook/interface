@@ -18,12 +18,11 @@
           </b-field>
 
           <b-field label="Select Book Type">
-            <b-select placeholder="Book Type" expanded>
+            <b-select placeholder="Book Type" v-model="selection" expanded>
               <option 
                    v-for="option in options"
                    :value="option.value"
-                   :key="option.id"
-                   v-model="selection">
+                   :key="option.id">
               {{ option.name }}
               </option>
             </b-select>
@@ -67,7 +66,8 @@ export default {
       this.location = loc
     },
     createBook () {
-      var context = {location: this.location, name: this.name, genre: this.selection}
+      var location = `${this.location}/${this.name}`
+      var context = {location: location, name: this.name, genre: this.selection}
       this.$store.dispatch('new_book', context)
       this.$parent.close()
     }
@@ -75,9 +75,9 @@ export default {
   data () {
     return {
       options: [
-        {id: 1, name: 'Fantasy', value: 'fantasy'},
-        {id: 2, name: 'Fiction', value: 'fiction'},
-        {id: 3, name: 'Academic', value: 'academic'}
+        {id: 1, name: 'Fantasy', value: 'Fantasy'},
+        {id: 2, name: 'Fiction', value: 'Fiction'},
+        {id: 3, name: 'Academic', value: 'Academic'}
       ],
       location: '',
       selection: '',

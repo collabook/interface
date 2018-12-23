@@ -48,7 +48,7 @@ export default {
       e.preventDefault()
       var par = this
       const menu = new Menu()
-      var node = this.$store.state.Book.bookTree[e.target.id]
+      var node = this.$store.state.Book.files[e.target.id]
       if (node.isFolder === true) {
         menu.append(new MenuItem({label: 'Add new file',
           click () {
@@ -60,7 +60,6 @@ export default {
         menu.append(new MenuItem({label: 'Add new Folder',
           click () {
             par.isNewNodeModalActive = true
-            console.log('sad')
             par.parent = e.target.id
             par.isFolder = true
           }}))
