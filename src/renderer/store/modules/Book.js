@@ -14,12 +14,6 @@ const state = {
 
   location: null,
 
-  modifiedFiles: new Set(),
-
-  synopsisChanged: false,
-
-  treeModified: false,
-
   author: '',
 
   email: ''
@@ -27,22 +21,12 @@ const state = {
 
 const mutations = {
 
-  // open book new book mutations are the same
-  //
   NEW_BOOK (state, {files, location, name}) {
     state.files = files
     state.location = location
     state.name = name
-
-    // set some default values
-    state.synopsisChanged = false
-    state.treeModified = false
-    state.modifiedFiles = new Set()
-    state.activeFile = null
-    state.currentContent = ''
   },
 
-  // Probably not needed
   SAVE_FILE (state, filename, content) {
     state.filename.content = content
   },
@@ -58,7 +42,6 @@ const mutations = {
   },
 
   CHANGE_CURRENT_FILE (state, id) {
-    // here modified file flag should be checked instead of direct content
     if (state.activeFile !== null && state.files[state.activeFile].content !== state.currentContent) {
       state.files[state.activeFile].content = state.currentContent
     }
@@ -75,35 +58,12 @@ const mutations = {
     Vue.set(state.files, id, node)
   },
 
-  ADD_SYNOPSIS (state, {id, content}) {
-    state.synopsis = [...state.synopsis, {id: id, content: content}]
-    state.synopsisChanged = true
+  DELETE_FILE (state, id) {
+    Vue.delete(state.files, id)
   },
 
   SYNOPSIS_CHANGE (state, payload) {
     state.files[payload.id].synopsis = payload.value
-    /*
-    var newSynopsis = state.synopsis.map(item => {
-      if (item.id === payload.id) {
-        return {
-          id: payload.id,
-          content: payload.value
-        }
-      } else {
-        return item
-      }
-    })
-    Vue.set(state, 'synopsis', [...newSynopsis])
-    state.synopsisChanged = true
-    */
-  },
-
-  RESET_SYNOPSIS_CHANGE (state) {
-    state.synopsisChanged = false
-  },
-
-  RESET_CONTENT_CHANGED (state) {
-    state.modifiedFiles = new Set()
   },
 
   SET_AUTHOR (state, {name, email}) {
@@ -142,7 +102,6 @@ const actions = {
       })
   },
 
-  // Probably does not belong in store
   save_file ({ commit, state }) {
     axios.post(`http://127.0.0.1:8088/savefile`, {
       rel_path: state.files[state.activeFile].relPath,
@@ -159,45 +118,6 @@ const actions = {
       id: id
     })
       .catch(e => messageBus.$emit('showError', e.response.data))
-  },
-
-  // should return all contents and book tree
-  // backend should iterate tree create files if doesn't exist
-  // then save contents
-  //
-  // it should update ka current files content before saving book
-  //
-  // perhaps we can use this to save synopsis change as well
-  // if we do this we should check for some book content modified flag as we don't want to be sending
-  // the entire book to backend for some small synopsis update
-  save_book ({ commit, state }) {
-    // we do this because state.currentContent stores the content viewable on the editor
-    // the changes in state.currentContent are only propogated to state.content when the user switches
-    // to another file
-    // this is a problem in cases like:
-    // user opens a file makes changes but presses ctrl+s without switching the current file to something else
-    // here the content of state.content won't be updated only the currentContent is updated
-    // changing current to file current file will propogate the changes
-    if (state.modifiedFiles.has(state.activeFile) === true) {
-      commit('CHANGE_CURRENT_FILE', state.activeFile)
-    }
-
-    // TODO: only modified files should be sent to core
-    if (state.modifiedFiles.size > 0 || state.treeModified === true || state.synopsisChanged === true) {
-      axios.post(`http://127.0.0.1:8088/savebook`,
-        {
-          location: state.location,
-          tree: state.bookTree,
-          content: state.content,
-          synopsis: state.synopsis
-        })
-        .then((res) => {
-          commit('RESET_CONTENT_CHANGED')
-        })
-        .catch((e) => {
-          messageBus.$emit('showError', e.response.data)
-        })
-    }
   },
 
   new_book ({ commit }, context) {
@@ -230,7 +150,6 @@ const actions = {
   },
 
   toggle_visibility ({ commit, state }, {id, action}) {
-    // this should probably be done as an action of opening folder and closing folder
     for (var file in state.files) {
       if (state.files[file].parent === id) {
         commit('TOGGLE_VISIBILITY', {id: file, action: action})
@@ -267,7 +186,18 @@ const actions = {
       .catch((e) => {
         messageBus.$emit('showError', e.response.data)
       })
+  },
+
+  delete_file ({ commit, state }, id) {
+    axios.post(`http://localhost:8088/deletefile`, {
+      location: state.location,
+      rel_path: state.files[id].relPath,
+      id: id
+    })
+      .then(res => commit('DELETE_FILE', id))
+      .catch(e => messageBus.$emit('showError', e.response.data))
   }
+
 }
 
 const getters = {

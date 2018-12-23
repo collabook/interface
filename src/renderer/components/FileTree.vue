@@ -65,7 +65,10 @@ export default {
           }}))
         menu.append(new MenuItem({type: 'separator'}))
       }
-      menu.append(new MenuItem({label: 'Delete file', click () { console.log(this) }})) // TODO
+      menu.append(new MenuItem({label: 'Delete file',
+        click () {
+          par.$store.dispatch('delete_file', e.target.id)
+        }}))
       menu.popup({window: remote.getCurrentWindow()})
     }
   }
