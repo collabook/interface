@@ -4,9 +4,8 @@
         <header class="modal-card-head">
           <p class="modal-card-title">New Book Wizard</p>
         </header>
+
         <section class="modal-card-body">
-
-
           <b-field label="Name">
             <b-input
                    type="text"

@@ -13,7 +13,7 @@
 
 <script>
 import Nodes from './Nodes'
-import NewNodeModal from './NewNodeModal'
+import NewNodeModal from './Modals/NewNodeModal'
 const {remote} = require('electron')
 const {Menu, MenuItem} = remote
 
@@ -81,6 +81,7 @@ export default {
   height: 835px;
   background-color:#f5f5f5;
   padding: 10px;
+  overflow: scroll;
 }
 
 #filetree-wrapper {

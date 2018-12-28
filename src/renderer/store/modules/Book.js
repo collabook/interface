@@ -10,7 +10,7 @@ const state = {
 
   activeFile: null,
 
-  currentContent: '',
+  currentContent: null,
 
   location: null,
 
@@ -25,6 +25,8 @@ const mutations = {
     state.files = files
     state.location = location
     state.name = name
+    state.currentContent = null
+    state.activeFile = null
   },
 
   SAVE_FILE (state, filename, content) {
@@ -51,7 +53,6 @@ const mutations = {
 
   CONTENT_CHANGED (state, value) {
     state.currentContent = value
-    state.modifiedFiles.add(state.activeFile)
   },
 
   ADD_FILE (state, {id, node}) {
@@ -129,6 +130,8 @@ const actions = {
             location: res.data.location,
             name: res.data.name
           })
+        commit('GIT_ADD_REMOTES', res.data.remotes)
+        commit('GIT_ADD_BRANCHES', res.data.branches)
       })
       .catch((e) => {
         messageBus.$emit('showError', e.response.data)
@@ -143,6 +146,8 @@ const actions = {
           location: res.data.location,
           name: res.data.name
         })
+        commit('GIT_ADD_REMOTES', res.data.remotes)
+        commit('GIT_ADD_BRANCHES', res.data.branches)
       })
       .catch((e) => {
         messageBus.$emit('showError', e.response.data)

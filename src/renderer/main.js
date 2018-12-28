@@ -66,12 +66,31 @@ ipcRenderer.on('gitLog', () => {
   messageBus.$emit('gitLog')
 })
 
+ipcRenderer.on('gitPush', () => {
+  messageBus.$emit('gitPush')
+})
+
+ipcRenderer.on('gitPull', () => {
+  messageBus.$emit('gitPull')
+})
 ipcRenderer.on('userSettings', () => {
   messageBus.$emit('userSettings')
 })
 
 ipcRenderer.on('gitAddRemote', () => {
   messageBus.$emit('gitAddRemote')
+})
+
+ipcRenderer.on('gitCreateBranch', () => {
+  messageBus.$emit('gitCreateBranch')
+})
+
+ipcRenderer.on('gitSwitchBranch', () => {
+  messageBus.$emit('gitSwitchBranch')
+})
+
+ipcRenderer.on('gitRebaseContinue', () => {
+  messageBus.$emit('gitRebaseContinue')
 })
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

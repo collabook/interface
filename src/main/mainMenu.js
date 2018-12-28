@@ -90,7 +90,13 @@ export default function mainMenu (mainWindow) {
         {
           label: 'Create Branch',
           click: () => {
-            console.log('branch')
+            mainWindow.webContents.send('gitCreateBranch')
+          }
+        },
+        {
+          label: 'Switch Branch',
+          click: () => {
+            mainWindow.webContents.send('gitSwitchBranch')
           }
         },
         {
@@ -102,13 +108,19 @@ export default function mainMenu (mainWindow) {
         {
           label: 'Push',
           click: () => {
-            console.log('push')
+            mainWindow.webContents.send('gitPush')
           }
         },
         {
           label: 'Pull',
           click: () => {
-            console.log('pull')
+            mainWindow.webContents.send('gitPull')
+          }
+        },
+        {
+          label: 'Continue Rebase',
+          click: () => {
+            mainWindow.webContents.send('gitRebaseContinue')
           }
         }
       ]
