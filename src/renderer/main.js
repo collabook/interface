@@ -10,14 +10,27 @@ import 'buefy/dist/buefy.css'
 // import util from 'util'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFolder, faFile } from '@fortawesome/free-solid-svg-icons'
+
+import {
+  faFolder, faFile, faFolderPlus, faFolderOpen,
+  faSave, faCloud, faCloudDownloadAlt, faCloudUploadAlt,
+  faCodeBranch, faEnvelope, faSitemap, faList,
+  faEdit, faTags, faColumns, faBook, faBookOpen,
+  faBookmark, faTree
+} from '@fortawesome/free-solid-svg-icons'
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import { ipcRenderer } from 'electron'
 
 Vue.use(Buefy)
 
-library.add(faFolder, faFile)
+library.add(
+  faFolder, faFile, faFolderPlus, faFolderOpen,
+  faSave, faCloud, faCloudDownloadAlt, faCloudUploadAlt,
+  faCodeBranch, faEnvelope, faSitemap, faList,
+  faEdit, faTags, faColumns, faBook, faBookOpen,
+  faBookmark, faTree)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

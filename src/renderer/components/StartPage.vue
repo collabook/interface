@@ -1,6 +1,6 @@
 <template>
   <div class="columns" id="wrapper">
-    <FileTree class="column mycolumn is-2" :files="heirTree"/></FileTree>
+    <FileTree v-if="fileTreeVisible" class="column mycolumn is-2" :files="heirTree"/></FileTree>
     <EditorPage class="column mycolumn is-11"></EditorPage>
   </div>
 </template>
@@ -18,6 +18,9 @@ export default {
   computed: {
     heirTree () {
       return this.$store.getters.heirTree
+    },
+    fileTreeVisible () {
+      return this.$store.state.Interface.fileTreeVisible
     }
   }
 }
