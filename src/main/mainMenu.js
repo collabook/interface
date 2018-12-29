@@ -118,6 +118,12 @@ export default function mainMenu (mainWindow) {
           }
         },
         {
+          label: 'Rebase',
+          click: () => {
+            mainWindow.webContents.send('gitRebase')
+          }
+        },
+        {
           label: 'Continue Rebase',
           click: () => {
             mainWindow.webContents.send('gitRebaseContinue')

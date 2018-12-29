@@ -72,6 +72,14 @@ const actions = {
       .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
+  git_rebase ({ commit, dispatch, rootState }, name) {
+    axios.post(`http://localhost:8088/gitrebase `, {location: rootState.Book.location, name: name})
+      .catch(e => {
+        dispatch('open_book', rootState.Book.location)
+        messageBus.$emit('showError', e.response.data)
+      })
+  },
+
   git_rebase_continue ({ commit, rootState }) {
     axios.post(`http://localhost:8088/gitrebasecontinue`, {location: rootState.Book.location})
       .catch(e => messageBus.$emit('showError', e.response.data))

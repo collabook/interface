@@ -24,6 +24,9 @@
     <b-modal :active.sync="isSwitchBranchModalActive" :width="500" has-modal-card>
       <switch-branch></switch-branch>
     </b-modal>
+    <b-modal :active.sync="isRebaseModalActive" :width="500" has-modal-card>
+      <rebase-modal></rebase-modal>
+    </b-modal>
   </div>
 </template>
 
@@ -36,6 +39,7 @@ import PushModal from '@/components/Modals/PushModal'
 import PullModal from '@/components/Modals/PullModal'
 import CreateBranch from '@/components/Modals/CreateBranch'
 import SwitchBranch from '@/components/Modals/SwitchBranch'
+import RebaseModal from '@/components/Modals/RebaseModal'
 import axios from 'axios'
 
 export default {
@@ -48,7 +52,8 @@ export default {
     PushModal,
     PullModal,
     CreateBranch,
-    SwitchBranch
+    SwitchBranch,
+    RebaseModal
   },
 
   data () {
@@ -60,7 +65,8 @@ export default {
       isPushModalActive: false,
       isPullModalActive: false,
       isCreateBranchModalActive: false,
-      isSwitchBranchModalActive: false
+      isSwitchBranchModalActive: false,
+      isRebaseModalActive: false
     }
   },
 
@@ -100,6 +106,9 @@ export default {
     })
     this.$messageBus.$on('gitSwitchBranch', () => {
       this.isSwitchBranchModalActive = true
+    })
+    this.$messageBus.$on('gitRebase', () => {
+      this.isRebaseModalActive = true
     })
   }
 }

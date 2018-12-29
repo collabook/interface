@@ -106,6 +106,10 @@ ipcRenderer.on('gitRebaseContinue', () => {
   messageBus.$emit('gitRebaseContinue')
 })
 
+ipcRenderer.on('gitRebase', () => {
+  messageBus.$emit('gitRebase')
+})
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false

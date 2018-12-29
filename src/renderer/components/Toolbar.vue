@@ -106,7 +106,7 @@ export default {
       for (var i = 0; i < this.branches.length; i++) {
         menu.append(new MenuItem({label: par.branches[i],
           click () {
-            this.$store.dispatch('switch_branch', par.branches[i])
+            par.$store.dispatch('switch_branch', par.branches[i])
           }
         }))
       }
@@ -121,7 +121,7 @@ export default {
       for (var i = 0; i < this.remotes.length; i++) {
         menu.append(new MenuItem({label: par.remotes[i],
           click () {
-            this.$store.dispatch('git_pull', par.remotes[i])
+            par.$store.dispatch('git_pull', par.remotes[i])
           }
         }))
       }
@@ -133,7 +133,7 @@ export default {
       for (var i = 0; i < this.remotes.length; i++) {
         menu.append(new MenuItem({label: par.remotes[i],
           click () {
-            this.$store.dispatch('git_push', par.remotes[i])
+            par.$store.dispatch('git_push', par.remotes[i - 1])
           }
         }))
       }
