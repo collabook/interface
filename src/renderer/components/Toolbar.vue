@@ -104,11 +104,13 @@ export default {
       var par = this
       const menu = new Menu()
       for (var i = 0; i < this.branches.length; i++) {
-        menu.append(new MenuItem({label: par.branches[i],
-          click () {
-            par.$store.dispatch('switch_branch', par.branches[i])
-          }
-        }))
+        menu.append(new MenuItem(
+          {
+            label: par.branches[i],
+            click (menuItem) {
+              par.$store.dispatch('git_switch_branch', menuItem.label)
+            }
+          }))
       }
       menu.popup({window: remote.getCurrentWindow()})
     },
@@ -120,8 +122,8 @@ export default {
       const menu = new Menu()
       for (var i = 0; i < this.remotes.length; i++) {
         menu.append(new MenuItem({label: par.remotes[i],
-          click () {
-            par.$store.dispatch('git_pull', par.remotes[i])
+          click (menuItem) {
+            par.$store.dispatch('git_pull', menuItem.label)
           }
         }))
       }
@@ -132,8 +134,8 @@ export default {
       const menu = new Menu()
       for (var i = 0; i < this.remotes.length; i++) {
         menu.append(new MenuItem({label: par.remotes[i],
-          click () {
-            par.$store.dispatch('git_push', par.remotes[i - 1])
+          click (menuItem) {
+            par.$store.dispatch('git_push', menuItem.label)
           }
         }))
       }

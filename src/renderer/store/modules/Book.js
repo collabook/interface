@@ -121,7 +121,7 @@ const actions = {
       .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
-  new_book ({ commit }, context) {
+  new_book ({ commit, dispatch }, context) {
     axios.post(`http://127.0.0.1:8088/newbook`, context)
       .then((res) => {
         commit('NEW_BOOK',
@@ -130,15 +130,17 @@ const actions = {
             location: res.data.location,
             name: res.data.name
           })
+        // not sure what the best way to do this ... should log be send along with open book?
         commit('GIT_ADD_REMOTES', res.data.remotes)
         commit('GIT_ADD_BRANCHES', res.data.branches)
+        dispatch('git_logs')
       })
       .catch((e) => {
         messageBus.$emit('showError', e.response.data)
       })
   },
 
-  open_book ({ commit }, location) {
+  open_book ({ commit, dispatch }, location) {
     axios.post(`http://127.0.0.1:8088/openbook`, {location: location})
       .then((res) => {
         commit('NEW_BOOK', {
@@ -148,8 +150,10 @@ const actions = {
         })
         commit('GIT_ADD_REMOTES', res.data.remotes)
         commit('GIT_ADD_BRANCHES', res.data.branches)
+        dispatch('git_logs')
       })
       .catch((e) => {
+        console.log(e)
         messageBus.$emit('showError', e.response.data)
       })
   },

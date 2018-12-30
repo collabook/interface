@@ -3,7 +3,8 @@ import { messageBus } from './../../main.js'
 
 const state = {
   remotes: [],
-  branches: []
+  branches: [],
+  logs: []
 }
 
 const mutations = {
@@ -13,6 +14,10 @@ const mutations = {
 
   GIT_ADD_BRANCHES (state, branches) {
     state.branches = branches
+  },
+
+  GIT_ADD_LOGS (state, logs) {
+    state.logs = logs
   }
 }
 
@@ -27,9 +32,16 @@ const actions = {
       .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
-  git_commit ({ commit, rootState }, message) {
+  git_commit ({ commit, dispatch, rootState }, message) {
     axios.post(`http://localhost:8088/gitcommit`, {location: rootState.Book.location, message: message})
+      .then(res => dispatch('git_logs'))
       .catch((e) => messageBus.$emit('showError', e.response.data))
+  },
+
+  git_logs ({ commit, state, rootState }) {
+    axios.post(`http://localhost:8088/gitlog`, {location: rootState.Book.location})
+      .then(res => commit('GIT_ADD_LOGS', res.data))
+      .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
   git_get_remotes ({ commit, state, rootState }) {
@@ -67,8 +79,9 @@ const actions = {
       .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
-  git_switch_branch ({ commit, rootState }, name) {
+  git_switch_branch ({ commit, dispatch, rootState }, name) {
     axios.post(`http://localhost:8088/gitswitchbranch`, {location: rootState.Book.location, name: name})
+      .then(res => dispatch('open_book', rootState.Book.location))
       .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
