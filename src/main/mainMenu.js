@@ -106,6 +106,12 @@ export default function mainMenu (mainWindow) {
           }
         },
         {
+          label: 'Clone',
+          click: () => {
+            mainWindow.webContents.send('gitClone')
+          }
+        },
+        {
           label: 'Push',
           click: () => {
             mainWindow.webContents.send('gitPush')

@@ -131,9 +131,9 @@ const actions = {
             name: res.data.name
           })
         // not sure what the best way to do this ... should log be send along with open book?
-        commit('GIT_ADD_REMOTES', res.data.remotes)
-        commit('GIT_ADD_BRANCHES', res.data.branches)
-        dispatch('git_logs')
+        // commit('GIT_ADD_REMOTES', res.data.remotes)
+        // commit('GIT_ADD_BRANCHES', res.data.branches)
+        // dispatch('git_logs')
       })
       .catch((e) => {
         messageBus.$emit('showError', e.response.data)

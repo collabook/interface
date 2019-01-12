@@ -96,6 +96,11 @@ const actions = {
   git_rebase_continue ({ commit, rootState }) {
     axios.post(`http://localhost:8088/gitrebasecontinue`, {location: rootState.Book.location})
       .catch(e => messageBus.$emit('showError', e.response.data))
+  },
+
+  git_clone ({ commit, dispatch }, context) {
+    axios.post(`http://localhost:8088/gitclone`, context)
+      .then(res => dispatch('open_book', context.location))
   }
 
 }

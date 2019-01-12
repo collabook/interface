@@ -110,6 +110,10 @@ ipcRenderer.on('gitRebase', () => {
   messageBus.$emit('gitRebase')
 })
 
+ipcRenderer.on('gitClone', () => {
+  messageBus.$emit('gitClone')
+})
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false

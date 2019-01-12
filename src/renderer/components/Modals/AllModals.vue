@@ -27,6 +27,9 @@
     <b-modal :active.sync="isRebaseModalActive" :width="500" has-modal-card>
       <rebase-modal></rebase-modal>
     </b-modal>
+    <b-modal :active.sync="isCloneModalActive" :width="500" has-modal-card>
+      <clone></clone>
+    </b-modal>
   </div>
 </template>
 
@@ -40,6 +43,7 @@ import PullModal from '@/components/Modals/PullModal'
 import CreateBranch from '@/components/Modals/CreateBranch'
 import SwitchBranch from '@/components/Modals/SwitchBranch'
 import RebaseModal from '@/components/Modals/RebaseModal'
+import Clone from '@/components/Modals/Clone'
 import axios from 'axios'
 
 export default {
@@ -53,7 +57,8 @@ export default {
     PullModal,
     CreateBranch,
     SwitchBranch,
-    RebaseModal
+    RebaseModal,
+    Clone
   },
 
   data () {
@@ -66,7 +71,8 @@ export default {
       isPullModalActive: false,
       isCreateBranchModalActive: false,
       isSwitchBranchModalActive: false,
-      isRebaseModalActive: false
+      isRebaseModalActive: false,
+      isCloneModalActive: false
     }
   },
 
@@ -76,9 +82,7 @@ export default {
         this.$store.commit('SET_AUTHOR', {name: res.data.name, email: res.data.email})
       })
       .catch((e) => {
-        if (e.response.status === 404) {
-          this.isNewAuthorModalActive = true
-        }
+        this.isNewAuthorModalActive = true
       })
   },
 
@@ -109,6 +113,9 @@ export default {
     })
     this.$messageBus.$on('gitRebase', () => {
       this.isRebaseModalActive = true
+    })
+    this.$messageBus.$on('gitClone', () => {
+      this.isCloneModalActive = true
     })
   }
 }
