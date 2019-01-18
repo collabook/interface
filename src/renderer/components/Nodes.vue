@@ -1,5 +1,6 @@
 <template>
   <div id="wrapper" v-if="node.isVisible">
+    <!--<p class="hello">hello world2</p>-->
       <li>
         <span v-bind:class="isActive" :id=node.id @contextmenu="rightMenu($event)" @click="handleClick(node)">
           <font-awesome-icon icon="folder" v-if="node.isFolder"/>
@@ -10,7 +11,6 @@
           <node v-for="child in node.subfolders" :key="child.id" :node="child" :right-menu="rightMenu" :handle-click="handleClick"></node>
         </ul>
       </li>
-    </ul>
   </div>
 </template>
 

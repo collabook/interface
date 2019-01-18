@@ -1,4 +1,3 @@
-
 <template>
   <div id="wrapper">
       <div class="modal-card">

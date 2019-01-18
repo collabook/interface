@@ -138,6 +138,29 @@ export default function mainMenu (mainWindow) {
       ]
     },
     {
+      label: 'Github',
+      submenu: [
+        {
+          label: 'Create Repo',
+          click: () => {
+            mainWindow.webContents.send('hubCreate')
+          }
+        },
+        {
+          label: 'Delete Repo',
+          click: () => {
+            mainWindow.webContents.send('hubDelete')
+          }
+        },
+        {
+          label: 'Fork Repo',
+          click: () => {
+            mainWindow.webContents.send('hubFork')
+          }
+        }
+      ]
+    },
+    {
       label: 'Options',
       submenu: [
         {

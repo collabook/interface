@@ -26,8 +26,7 @@ export default {
   },
 
   props: {
-    files: Array,
-    node: Object
+    files: Array
   },
 
   data () {

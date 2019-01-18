@@ -30,6 +30,15 @@
     <b-modal :active.sync="isCloneModalActive" :width="500" has-modal-card>
       <clone></clone>
     </b-modal>
+    <b-modal :active.sync="isHubCreateModalActive" :width="500" has-modal-card>
+      <hub-create />
+    </b-modal>
+    <b-modal :active.sync="isHubDeleteModalActive" :width="500" has-modal-card>
+      <hub-delete />
+    </b-modal>
+    <b-modal :active.sync="isHubForkModalActive" :width="500" has-modal-card>
+      <hub-fork />
+    </b-modal>
   </div>
 </template>
 
@@ -44,6 +53,9 @@ import CreateBranch from '@/components/Modals/CreateBranch'
 import SwitchBranch from '@/components/Modals/SwitchBranch'
 import RebaseModal from '@/components/Modals/RebaseModal'
 import Clone from '@/components/Modals/Clone'
+import HubCreate from '@/components/Modals/HubCreate'
+import HubDelete from '@/components/Modals/HubDelete'
+import HubFork from '@/components/Modals/HubFork'
 import axios from 'axios'
 
 export default {
@@ -58,7 +70,10 @@ export default {
     CreateBranch,
     SwitchBranch,
     RebaseModal,
-    Clone
+    Clone,
+    HubCreate,
+    HubDelete,
+    HubFork
   },
 
   data () {
@@ -72,7 +87,10 @@ export default {
       isCreateBranchModalActive: false,
       isSwitchBranchModalActive: false,
       isRebaseModalActive: false,
-      isCloneModalActive: false
+      isCloneModalActive: false,
+      isHubCreateModalActive: false,
+      isHubDeleteModalActive: false,
+      isHubForkModalActive: false
     }
   },
 
@@ -116,6 +134,15 @@ export default {
     })
     this.$messageBus.$on('gitClone', () => {
       this.isCloneModalActive = true
+    })
+    this.$messageBus.$on('hubCreate', () => {
+      this.isHubCreateModalActive = true
+    })
+    this.$messageBus.$on('hubDelete', () => {
+      this.isHubDeleteModalActive = true
+    })
+    this.$messageBus.$on('hubFork', () => {
+      this.isHubForkModalActive = true
     })
   }
 }

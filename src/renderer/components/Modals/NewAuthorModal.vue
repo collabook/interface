@@ -27,9 +27,19 @@
                     required>
             </b-input>
           </b-field>
+
+          <b-field label="Access Token">
+            <b-input
+                   type="text"
+                    :value="token"
+                    placeholder="Enter access token for GitHub API"
+                    v-model="token"
+                    required>
+            </b-input>
+          </b-field>
           
     <label class="label">Choose authentication method with remote</label>
-<div class="block">
+    <div class="block">
             <b-radio v-model="auth_type"
                 native-value="Plain">
               Plain Text
@@ -93,8 +103,8 @@
 
         </section>
         <footer class="modal-card-foot">
-          <button class="button" type="button" @click="$parent.close()">Close</button>
           <button class="button is-primary" @click="save">Save</button>
+          <button class="button" type="button" @click="$parent.close()">Close</button>
         </footer>
       </div>
   </div>
@@ -110,6 +120,7 @@ export default {
       var context = {
         name: this.name,
         email: this.email,
+        token: this.token,
         auth_type: this.auth_type,
         username: this.username,
         password: this.password,
@@ -127,6 +138,7 @@ export default {
     return {
       name: '',
       email: '',
+      token: '',
       auth_type: 'Plain',
       username: '',
       password: '',

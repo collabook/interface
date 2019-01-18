@@ -16,7 +16,9 @@ const state = {
 
   author: '',
 
-  email: ''
+  email: '',
+
+  token: ''
 }
 
 const mutations = {
@@ -67,9 +69,10 @@ const mutations = {
     state.files[payload.id].synopsis = payload.value
   },
 
-  SET_AUTHOR (state, {name, email}) {
+  SET_AUTHOR (state, {name, email, token}) {
     state.author = name
     state.email = email
+    state.token = token
   }
 }
 
@@ -167,7 +170,7 @@ const actions = {
   },
 
   new_author ({ commit, state }, context) {
-    var payload = {name: context.name, email: context.email}
+    var payload = {name: context.name, email: context.email, token: context.token}
     if (context.auth_type === 'Plain') {
       payload.auth = {
         type: context.auth_type,
@@ -190,7 +193,7 @@ const actions = {
     }
     axios.post(`http://localhost:8088/author`, payload)
       .then((res) => {
-        commit('SET_AUTHOR', {name: context.name, email: context.email})
+        commit('SET_AUTHOR', {name: context.name, email: context.email, token: context.token})
       })
       .catch((e) => {
         messageBus.$emit('showError', e.response.data)

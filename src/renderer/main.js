@@ -114,6 +114,18 @@ ipcRenderer.on('gitClone', () => {
   messageBus.$emit('gitClone')
 })
 
+ipcRenderer.on('hubCreate', () => {
+  messageBus.$emit('hubCreate')
+})
+
+ipcRenderer.on('hubDelete', () => {
+  messageBus.$emit('hubDelete')
+})
+
+ipcRenderer.on('hubFork', () => {
+  messageBus.$emit('hubFork')
+})
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
