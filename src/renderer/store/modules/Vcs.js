@@ -68,8 +68,9 @@ const actions = {
       })
   },
 
-  git_pull ({ commit, rootState }, name) {
+  git_pull ({ commit, dispatch, rootState }, name) {
     axios.post(`http://localhost:8088/gitpull`, {location: rootState.Book.location, name: name})
+      .then(res => dispatch('open_book', rootState.Book.location))
       .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
@@ -101,6 +102,12 @@ const actions = {
   git_clone ({ commit, dispatch }, context) {
     axios.post(`http://localhost:8088/gitclone`, context)
       .then(res => dispatch('open_book', context.location))
+  },
+
+  sync_fork ({ rootState }, context) {
+    context.location = rootState.Book.location
+    axios.post(`http://localhost:8088/syncfork`, context)
+      .catch(e => messageBus.$emit('showError', e.response.data))
   }
 
 }

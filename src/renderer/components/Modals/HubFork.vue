@@ -45,7 +45,6 @@ export default {
   methods: {
     hub_fork () {
       this.$store.dispatch('hub_fork_repo', {name: this.name, owner: this.owner})
-        .catch(e => this.$messageBus.$emit('showError', e.response.data))
       this.$parent.close()
     }
   },

@@ -208,6 +208,15 @@ const actions = {
     })
       .then(res => commit('DELETE_FILE', id))
       .catch(e => messageBus.$emit('showError', e.response.data))
+  },
+
+  compile_book ({ state }, orderedFiles) {
+    const ids = orderedFiles.map(file => file.id)
+    axios.post(`http://localhost:8088/compile`, {
+      location: state.location,
+      ids
+    })
+      .catch(e => console.log(e.response.data))
   }
 
 }
@@ -241,6 +250,13 @@ const getters = {
     var ids = Object.keys(state.files)
     ids.map(id => synopsis.push({id: id, content: state.files[id].synopsis}))
     return synopsis
+  },
+
+  files (state) {
+    var files = []
+    var ids = Object.keys(state.files)
+    ids.filter(id => state.files[id].isFolder === false).map(id => files.push({id: id, rel_path: state.files[id].relPath}))
+    return files
   }
 }
 

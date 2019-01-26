@@ -126,6 +126,14 @@ ipcRenderer.on('hubFork', () => {
   messageBus.$emit('hubFork')
 })
 
+ipcRenderer.on('syncFork', () => {
+  messageBus.$emit('syncFork')
+})
+
+ipcRenderer.on('export', () => {
+  messageBus.$emit('export')
+})
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false

@@ -21,6 +21,11 @@ export default new Router({
       component: require('@/components/CommitLog').default
     },
     {
+      path: '/compile',
+      name: 'Compile',
+      component: require('@/components/Compile').default
+    },
+    {
       path: '*',
       redirect: '/'
     }

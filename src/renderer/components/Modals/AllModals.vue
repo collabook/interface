@@ -39,6 +39,9 @@
     <b-modal :active.sync="isHubForkModalActive" :width="500" has-modal-card>
       <hub-fork />
     </b-modal>
+    <b-modal :active.sync="isSyncForkModalActive" :width="500" has-modal-card>
+      <sync-fork />
+    </b-modal>
   </div>
 </template>
 
@@ -56,6 +59,7 @@ import Clone from '@/components/Modals/Clone'
 import HubCreate from '@/components/Modals/HubCreate'
 import HubDelete from '@/components/Modals/HubDelete'
 import HubFork from '@/components/Modals/HubFork'
+import SyncFork from '@/components/Modals/SyncFork'
 import axios from 'axios'
 
 export default {
@@ -73,7 +77,8 @@ export default {
     Clone,
     HubCreate,
     HubDelete,
-    HubFork
+    HubFork,
+    SyncFork
   },
 
   data () {
@@ -90,7 +95,8 @@ export default {
       isCloneModalActive: false,
       isHubCreateModalActive: false,
       isHubDeleteModalActive: false,
-      isHubForkModalActive: false
+      isHubForkModalActive: false,
+      isSyncForkModalActive: false
     }
   },
 
@@ -143,6 +149,9 @@ export default {
     })
     this.$messageBus.$on('hubFork', () => {
       this.isHubForkModalActive = true
+    })
+    this.$messageBus.$on('syncFork', () => {
+      this.isSyncForkModalActive = true
     })
   }
 }

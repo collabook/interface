@@ -61,6 +61,9 @@ export default {
     messageBus.$on('showError', (msg) => {
       this.$dialog.alert(msg)
     })
+    messageBus.$on('export', () => {
+      this.$router.push('/compile')
+    })
   }
 }
 </script>

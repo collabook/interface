@@ -26,6 +26,10 @@ export default function mainMenu (mainWindow) {
           click: () => { mainWindow.webContents.send('save') }
         },
         {
+          label: 'Export',
+          click: () => { mainWindow.webContents.send('export') }
+        },
+        {
           label: 'Quit',
           accelerator: 'Ctrl+q',
           click: () => { app.quit() }
@@ -156,6 +160,12 @@ export default function mainMenu (mainWindow) {
           label: 'Fork Repo',
           click: () => {
             mainWindow.webContents.send('hubFork')
+          }
+        },
+        {
+          label: 'Sync Fork',
+          click: () => {
+            mainWindow.webContents.send('syncFork')
           }
         }
       ]

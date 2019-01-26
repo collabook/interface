@@ -44,7 +44,6 @@ export default {
   methods: {
     create () {
       this.$store.dispatch('hub_create_repo', {name: this.name, description: this.description})
-        .catch(e => this.$messageBus.$emit('showError', e.response.data))
       this.$parent.close()
     }
   },
