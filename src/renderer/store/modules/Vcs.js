@@ -94,14 +94,24 @@ const actions = {
       })
   },
 
-  git_rebase_continue ({ commit, rootState }) {
+  git_rebase_continue ({ commit, dispatch, rootState }) {
     axios.post(`http://localhost:8088/gitrebasecontinue`, {location: rootState.Book.location})
+      .then(res => dispatch('open_book', rootState.Book.location))
       .catch(e => messageBus.$emit('showError', e.response.data))
   },
 
   git_clone ({ commit, dispatch }, context) {
     axios.post(`http://localhost:8088/gitclone`, context)
       .then(res => dispatch('open_book', context.location))
+  },
+
+  git_merge ({ dispatch, rootState }, branch) {
+    axios.post(`http://localhost:8088/gitmerge`, {
+      location: rootState.Book.location,
+      name: branch
+    })
+      .then(res => dispatch('open_book', rootState.Book.location))
+      .catch(e => messageBus.$emit('showErorr', e.response.data))
   },
 
   sync_fork ({ rootState }, context) {

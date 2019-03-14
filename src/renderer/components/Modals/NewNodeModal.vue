@@ -6,7 +6,7 @@
         </header>
 
         <section class="modal-card-body">
-          <label class="label">Message</label>
+          <label class="label">Node Name</label>
           <b-field>
             <b-input
                    type="text"
