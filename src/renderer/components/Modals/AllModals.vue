@@ -42,6 +42,9 @@
     <b-modal :active.sync="isSyncForkModalActive" :width="500" has-modal-card>
       <sync-fork />
     </b-modal>
+    <b-modal :active.sync="isMergeBranchModalActive" :width="500" has-modal-card>
+      <merge-branch />
+    </b-modal>
   </div>
 </template>
 
@@ -60,6 +63,7 @@ import HubCreate from '@/components/Modals/HubCreate'
 import HubDelete from '@/components/Modals/HubDelete'
 import HubFork from '@/components/Modals/HubFork'
 import SyncFork from '@/components/Modals/SyncFork'
+import MergeBranch from '@/components/Modals/MergeBranch'
 import axios from 'axios'
 
 export default {
@@ -78,7 +82,8 @@ export default {
     HubCreate,
     HubDelete,
     HubFork,
-    SyncFork
+    SyncFork,
+    MergeBranch
   },
 
   data () {
@@ -96,7 +101,8 @@ export default {
       isHubCreateModalActive: false,
       isHubDeleteModalActive: false,
       isHubForkModalActive: false,
-      isSyncForkModalActive: false
+      isSyncForkModalActive: false,
+      isMergeBranchModalActive: false
     }
   },
 
@@ -152,6 +158,9 @@ export default {
     })
     this.$messageBus.$on('syncFork', () => {
       this.isSyncForkModalActive = true
+    })
+    this.$messageBus.$on('gitMerge', () => {
+      this.isMergeBranchModalActive = true
     })
   }
 }

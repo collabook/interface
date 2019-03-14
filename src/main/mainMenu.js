@@ -128,6 +128,12 @@ export default function mainMenu (mainWindow) {
           }
         },
         {
+          label: 'Merge Branch',
+          click: () => {
+            mainWindow.webContents.send('gitMerge')
+          }
+        },
+        {
           label: 'Rebase',
           click: () => {
             mainWindow.webContents.send('gitRebase')

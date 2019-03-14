@@ -8,6 +8,8 @@ const state = {
 
   name: '',
 
+  bookType: null,
+
   activeFile: null,
 
   currentContent: null,
@@ -23,12 +25,13 @@ const state = {
 
 const mutations = {
 
-  NEW_BOOK (state, {files, location, name}) {
+  NEW_BOOK (state, {files, location, name, type}) {
     state.files = files
     state.location = location
     state.name = name
     state.currentContent = null
     state.activeFile = null
+    state.bookType = type
   },
 
   SAVE_FILE (state, filename, content) {
@@ -131,7 +134,8 @@ const actions = {
           {
             files: res.data.files,
             location: res.data.location,
-            name: res.data.name
+            name: res.data.name,
+            type: res.data.bookType
           })
         // not sure what the best way to do this ... should log be send along with open book?
         // commit('GIT_ADD_REMOTES', res.data.remotes)
@@ -149,7 +153,8 @@ const actions = {
         commit('NEW_BOOK', {
           files: res.data.files,
           location: res.data.location,
-          name: res.data.name
+          name: res.data.name,
+          type: res.data.bookType
         })
         commit('GIT_ADD_REMOTES', res.data.remotes)
         commit('GIT_ADD_BRANCHES', res.data.branches)

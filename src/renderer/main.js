@@ -114,6 +114,10 @@ ipcRenderer.on('gitClone', () => {
   messageBus.$emit('gitClone')
 })
 
+ipcRenderer.on('gitMerge', () => {
+  messageBus.$emit('gitMerge')
+})
+
 ipcRenderer.on('hubCreate', () => {
   messageBus.$emit('hubCreate')
 })
